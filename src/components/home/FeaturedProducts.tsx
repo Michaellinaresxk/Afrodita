@@ -6,106 +6,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
-
-// Datos de ejemplo - En una app real vendrían de una API o CMS
-const luxuryProducts = [
-  {
-    id: 1,
-    name: 'Lavanda Provence',
-    description:
-      'Relajante y calmante, una experiencia de tranquilidad para pieles sensibles.',
-    price: 12.99,
-    image: '/img/products/lavender-soap.png',
-    category: 'Relajantes',
-    ingredients: [
-      'Aceite de oliva virgen',
-      'Aceite de coco',
-      'Lavanda orgánica',
-      'Arcilla violeta',
-      'Manteca de karité',
-    ],
-    isNew: false,
-    rating: 4.8,
-    reviews: 124,
-    colors: ['#e0d5f0', '#c9b8e0'],
-    bg: 'bg-gradient-to-b from-purple-100 to-purple-50',
-    accent: 'text-purple-800',
-    border: 'border-purple-200',
-    badgeText: 'Relajante',
-  },
-  {
-    id: 2,
-    name: 'Aloe Vera Royal',
-    description:
-      'Hidratante intensivo que nutre y repara la piel dañada o expuesta al sol.',
-    price: 14.99,
-    image: '/img/products/aloe-soap.png',
-    category: 'Hidratantes',
-    ingredients: [
-      'Aceite de oliva virgen',
-      'Aceite de argán',
-      'Gel de aloe vera orgánico',
-      'Aceite esencial de menta',
-      'Vitamina E',
-    ],
-    isNew: true,
-    rating: 4.9,
-    reviews: 87,
-    colors: ['#d4f0d9', '#b3e0b9'],
-    bg: 'bg-gradient-to-b from-green-100 to-green-50',
-    accent: 'text-green-800',
-    border: 'border-green-200',
-    badgeText: 'Hidratante',
-  },
-  {
-    id: 3,
-    name: 'Rosa Damascena',
-    description:
-      'El aroma atemporal de rosas frescas con propiedades tonificantes para tu piel.',
-    price: 16.99,
-    image: '/img/products/rose-soap.png',
-    category: 'Tonificantes',
-    ingredients: [
-      'Aceite de oliva virgen',
-      'Manteca de karité',
-      'Pétalos de rosa orgánicos',
-      'Arcilla rosa',
-      'Agua de rosas',
-    ],
-    isNew: false,
-    rating: 4.7,
-    reviews: 105,
-    colors: ['#f8d4e2', '#f0b8d0'],
-    bg: 'bg-gradient-to-b from-rose-100 to-rose-50',
-    accent: 'text-rose-800',
-    border: 'border-rose-200',
-    badgeText: 'Tonificante',
-  },
-  {
-    id: 4,
-    name: 'Miel & Avena Luxury',
-    description:
-      'Exfoliación suave con nutrición profunda. Una caricia para todo tipo de pieles.',
-    price: 15.99,
-    image: '/img/products/honey-soap.png',
-    category: 'Exfoliantes',
-    ingredients: [
-      'Aceite de oliva virgen',
-      'Miel de acacia orgánica',
-      'Avena',
-      'Manteca de cacao',
-      'Vainilla',
-    ],
-    isNew: true,
-    rating: 4.9,
-    reviews: 62,
-    colors: ['#f0e4c9', '#e0d0a8'],
-    bg: 'bg-gradient-to-b from-amber-100 to-amber-50',
-    accent: 'text-amber-800',
-    border: 'border-amber-200',
-    badgeText: 'Nutritivo',
-  },
-];
+import ProductCard from '../products/ProductCard';
+import { luxuryProducts } from '@/constants/products';
 
 export default function LuxuryProductSection() {
   const ref = useRef(null);
@@ -158,10 +60,12 @@ export default function LuxuryProductSection() {
           className='relative'
         >
           {/* Desktop view - Grilla que asegura disposición horizontal */}
-          <div className='hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'>
-            {luxuryProducts.map((product) => (
-              <LuxuryProductCard key={product.id} product={product} />
-            ))}
+          <div className='hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
+            {luxuryProducts
+              .filter((product) => product.featured === true)
+              .map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
           </div>
 
           {/* Mobile view - Swiper para asegurar scroll horizontal */}
@@ -179,7 +83,7 @@ export default function LuxuryProductSection() {
             >
               {luxuryProducts.map((product) => (
                 <SwiperSlide key={product.id}>
-                  <LuxuryProductCard product={product} />
+                  <ProductCard product={product} />
                 </SwiperSlide>
               ))}
             </Swiper>
@@ -193,7 +97,7 @@ export default function LuxuryProductSection() {
           className='text-center mt-12'
         >
           <Link
-            href='/productos'
+            href='/products'
             className='inline-flex items-center bg-white text-primary-700 hover:text-primary-800 py-3 px-6 rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-primary-100 group'
           >
             <span>Ver toda la colección</span>
