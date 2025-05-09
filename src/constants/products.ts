@@ -1,5 +1,3 @@
-// constants/products.js
-
 // Categorías para los filtros
 export const categories = [
   { id: 'todos', name: 'Todos' },
@@ -28,7 +26,8 @@ export const luxuryProducts = [
     description:
       'Relajante y calmante, una experiencia de tranquilidad para pieles sensibles.',
     price: 12.99,
-    image: '/img/products/lavender-soap.png',
+    image: '/img/jabon.jpg',
+    featured: true,
     category: 'Relajantes',
     ingredients: [
       'Aceite de oliva virgen',
@@ -53,8 +52,9 @@ export const luxuryProducts = [
     description:
       'Hidratante intensivo que nutre y repara la piel dañada o expuesta al sol.',
     price: 14.99,
-    image: '/img/products/aloe-soap.png',
+    image: '/img/productos/11.jpg',
     category: 'Hidratantes',
+    featured: true,
     ingredients: [
       'Aceite de oliva virgen',
       'Aceite de argán',
@@ -78,8 +78,9 @@ export const luxuryProducts = [
     description:
       'El aroma atemporal de rosas frescas con propiedades tonificantes para tu piel.',
     price: 16.99,
-    image: '/img/products/rose-soap.png',
+    image: '/img/productos/2.jpg',
     category: 'Tonificantes',
+    featured: true,
     ingredients: [
       'Aceite de oliva virgen',
       'Manteca de karité',
@@ -105,6 +106,7 @@ export const luxuryProducts = [
     price: 15.99,
     image: '/img/products/honey-soap.png',
     category: 'Exfoliantes',
+    featured: false,
     ingredients: [
       'Aceite de oliva virgen',
       'Miel de acacia orgánica',
@@ -130,6 +132,7 @@ export const luxuryProducts = [
     price: 13.99,
     image: '/img/products/green-clay-soap.png',
     category: 'Purificantes',
+    featured: false,
     ingredients: [
       'Aceite de oliva virgen',
       'Arcilla verde francesa',
@@ -155,6 +158,7 @@ export const luxuryProducts = [
     price: 14.49,
     image: '/img/products/citrus-soap.png',
     category: 'Revitalizantes',
+    featured: false,
     ingredients: [
       'Aceite de oliva virgen',
       'Manteca de cacao',
@@ -179,6 +183,7 @@ export const luxuryProducts = [
       'Calmante para pieles irritadas o con problemas. Alivio natural para dermatitis.',
     price: 15.49,
     image: '/img/products/calendula-soap.png',
+    featured: false,
     category: 'Calmantes',
     ingredients: [
       'Aceite de oliva virgen',
@@ -204,6 +209,7 @@ export const luxuryProducts = [
       'Ultra hidratante para pieles secas. El placer tropical para una piel suave y perfumada.',
     price: 12.99,
     image: '/img/products/coconut-soap.png',
+    featured: false,
     category: 'Hidratantes',
     ingredients: [
       'Aceite de coco virgen',

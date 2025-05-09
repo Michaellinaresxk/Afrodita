@@ -106,7 +106,7 @@ const ProductsPage = () => {
       {/* Header con imagen de fondo */}
       <div className='relative h-80 bg-primary-900 overflow-hidden'>
         <Image
-          src='/img/products-header.jpg'
+          src='/img/jabon.jpg'
           alt='Colección de jabones naturales'
           fill
           style={{ objectFit: 'cover' }}
@@ -318,7 +318,7 @@ const ProductsPage = () => {
               variants={containerVariants}
               initial='hidden'
               animate={isInView ? 'visible' : 'hidden'}
-              className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8'
+              className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8'
             >
               {filteredProducts.map((product) => (
                 <ProductCard

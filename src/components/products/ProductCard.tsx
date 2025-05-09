@@ -18,7 +18,7 @@ const ProductCard = ({ product, variants }) => {
     >
       {/* Borde decorativo superior */}
       <div
-        className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r'
+        className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r z-10'
         style={{
           backgroundImage: `linear-gradient(to right, ${product.colors[0]}, ${product.colors[1]})`,
         }}
@@ -38,41 +38,45 @@ const ProductCard = ({ product, variants }) => {
         )}
       </div>
 
-      {/* Imagen y capa de efecto */}
-      <div className='relative overflow-hidden'>
-        <Link href={`/productos/${product.id}`}>
-          <div
-            className={`relative h-64 ${product.bg} flex items-center justify-center p-6`}
+      {/* Imagen y capa de efecto - Contenedor con altura fija */}
+      <div className='relative w-full h-64 sm:h-56 md:h-64'>
+        <Link href={`/products/${product.id}`} className='block w-full h-full'>
+          {/* Fondo de color del producto */}
+          <div className={`absolute inset-0 ${product.bg}`}></div>
+
+          {/* Imagen con animación */}
+          <motion.div
+            className='absolute inset-0 flex items-center justify-center'
+            animate={{
+              y: isHovered ? -8 : 0,
+              scale: isHovered ? 1.05 : 1,
+            }}
+            transition={{ duration: 0.4 }}
           >
-            <motion.div
-              animate={{
-                y: isHovered ? -8 : 0,
-                scale: isHovered ? 1.05 : 1,
-              }}
-              transition={{ duration: 0.4 }}
-            >
+            <div className='relative w-full h-full flex items-center justify-center'>
               <Image
                 src={product.image}
                 alt={product.name}
+                className='w-auto h-auto max-w-full max-h-full object-contain drop-shadow-xl p-4'
                 width={200}
                 height={200}
-                className='h-auto w-auto object-contain drop-shadow-xl'
+                priority
               />
-            </motion.div>
+            </div>
+          </motion.div>
 
-            {/* Superposición en hover */}
-            <motion.div
-              className='absolute inset-0 bg-black/0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'
-              style={{
-                background:
-                  'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 100%)',
-              }}
-            >
-              <span className='bg-white text-primary-700 px-4 py-2 rounded-full shadow-lg font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300'>
-                Ver detalles
-              </span>
-            </motion.div>
-          </div>
+          {/* Superposición en hover */}
+          <motion.div
+            className='absolute inset-0 bg-black/0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity'
+            style={{
+              background:
+                'linear-gradient(to bottom, transparent 50%, rgba(0,0,0,0.3) 100%)',
+            }}
+          >
+            <span className='bg-white text-primary-700 px-4 py-2 rounded-full shadow-lg font-medium transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300'>
+              Ver detalles
+            </span>
+          </motion.div>
         </Link>
       </div>
 
@@ -108,7 +112,7 @@ const ProductCard = ({ product, variants }) => {
         </div>
 
         <Link
-          href={`/productos/${product.id}`}
+          href={`/products/${product.id}`}
           className='block group-hover:text-primary-700'
         >
           <h3 className='font-serif text-lg font-semibold mb-1.5 transition-colors'>

@@ -30,9 +30,9 @@ export default function Navbar() {
   const navLinks = [
     { title: 'Inicio', href: '/' },
     { title: 'Productos', href: '/products' },
-    { title: 'Sobre Nosotros', href: '/sobre-nosotros' },
-    { title: 'Blog', href: '/blog' },
-    { title: 'Contacto', href: '/contacto' },
+    { title: 'Sobre Nosotros', href: '/about' },
+    // { title: 'Blog', href: '/blog' },
+    { title: 'Contacto', href: '/contact' },
   ];
 
   // Animaciones para el menú móvil
@@ -168,34 +168,6 @@ export default function Navbar() {
 
           {/* Botones de Acción (Desktop) */}
           <div className='hidden md:flex items-center space-x-2'>
-            {/* Botón Buscar */}
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.5, duration: 0.3 }}
-              className={`p-2 rounded-full ${
-                scrolled
-                  ? 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              } transition-colors`}
-              aria-label='Buscar'
-            >
-              <svg
-                className='w-5 h-5'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                ></path>
-              </svg>
-            </motion.button>
-
             {/* Botón Carrito con Animación */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
