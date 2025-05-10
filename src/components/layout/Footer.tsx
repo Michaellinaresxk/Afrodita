@@ -70,7 +70,7 @@ export default function Footer() {
           <div>
             <h3 className='text-lg font-semibold mb-4'>Contáctanos</h3>
             <ul className='space-y-2 text-neutral-300'>
-              <li>info@naturasoap.com</li>
+              <li>info@afrodita-jabones.com</li>
               <li>+34 123 456 789</li>
               <li>Calle Botánica 123, Madrid</li>
             </ul>
@@ -100,8 +100,8 @@ export default function Footer() {
 
         <div className='mt-8 pt-8 border-t border-primary-800 flex flex-col md:flex-row justify-between items-center'>
           <p className='text-sm text-neutral-400'>
-            &copy; {new Date().getFullYear()} NaturaSoap. Todos los derechos
-            reservados.
+            &copy; {new Date().getFullYear()} Afrotida-Jabones. Todos los
+            derechos reservados.
           </p>
           <div className='flex space-x-4 mt-4 md:mt-0'>
             <a href='#' className='text-neutral-400 hover:text-white'>

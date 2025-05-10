@@ -95,8 +95,8 @@ export default function ContactPage() {
         </svg>
       ),
       title: 'Email',
-      info: 'info@naturasoap.com',
-      link: 'mailto:info@naturasoap.com',
+      info: 'info@afrodita-jabones.com',
+      link: 'mailto:info@afroditajabones.com',
     },
     {
       icon: (
@@ -116,8 +116,8 @@ export default function ContactPage() {
         </svg>
       ),
       title: 'Teléfono',
-      info: '+34 123 456 789',
-      link: 'tel:+34123456789',
+      info: '+1 (849) 624-9869',
+      link: 'tel:+18496249869',
     },
     {
       icon: (
@@ -143,7 +143,7 @@ export default function ContactPage() {
         </svg>
       ),
       title: 'Dirección',
-      info: 'Calle Botánica 123, Madrid',
+      info: 'Calle Central esq. Mella',
       link: 'https://goo.gl/maps/XXX',
     },
   ];
@@ -187,8 +187,8 @@ export default function ContactPage() {
       {/* Header con imagen de fondo */}
       <div className='relative h-80 bg-primary-900 overflow-hidden'>
         <Image
-          src='/img/contact-header.jpg'
-          alt='Contáctanos - NaturaSoap'
+          src='/img/productos/jabon-6.jpg'
+          alt='Contáctanos - Afrodita Jabones'
           fill
           style={{ objectFit: 'cover' }}
           priority

@@ -157,7 +157,7 @@ export default function AboutUsPage() {
         <motion.div className='absolute inset-0 z-0' style={{ y, opacity }}>
           <Image
             src='/img/jabon.jpg'
-            alt='NaturaSoap - Sobre nosotros'
+            alt='Afrodita Jabones - Sobre nosotros'
             fill
             style={{ objectFit: 'cover' }}
             priority
@@ -413,7 +413,7 @@ export default function AboutUsPage() {
               transition={{ duration: 0.7 }}
             >
               <h2 className='font-serif text-3xl md:text-4xl font-bold mb-6'>
-                Descubre la diferencia de NaturaSoap
+                Descubre la diferencia de Jabones Afrodita
               </h2>
               <p className='text-lg mb-8 max-w-3xl mx-auto'>
                 Explora nuestra colección de jabones artesanales y productos

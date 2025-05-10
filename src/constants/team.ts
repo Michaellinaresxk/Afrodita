@@ -4,7 +4,7 @@ export const team = [
     id: 1,
     name: 'Ana García',
     role: 'Fundadora & CEO',
-    bio: 'Apasionada por los productos naturales y comprometida con la creación de una marca sostenible. Ana fundó NaturaSoap con la visión de transformar la rutina de cuidado personal.',
+    bio: 'Apasionada por los productos naturales y comprometida con la creación de una marca sostenible. Ana fundó Afrodita Jabones con la visión de transformar la rutina de cuidado personal.',
     image: '/placeholder/400/400',
   },
   {

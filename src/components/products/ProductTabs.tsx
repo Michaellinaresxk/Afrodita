@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
+import ReviewStars from './ReviewStars';
 
 export default function ProductTabs({ product }) {
   const [activeTab, setActiveTab] = useState('description');

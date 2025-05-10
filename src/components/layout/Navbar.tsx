@@ -107,7 +107,7 @@ export default function Navbar() {
               <div className='relative h-10 w-10 mr-2'>
                 <Image
                   src='/img/logo.png' // Reemplazar con el logo real
-                  alt='Natura Soap'
+                  alt='Afrodita'
                   fill
                   style={{ objectFit: 'contain' }}
                 />
@@ -115,7 +115,7 @@ export default function Navbar() {
               <span
                 className={`font-serif text-2xl font-bold ${navbarBgColor} transition-colors duration-300`}
               >
-                Natura<span className='text-secondary-500'>Soap</span>
+                Afrodita<span className='text-secondary-500'>-</span>
               </span>
             </Link>
           </motion.div>
@@ -218,7 +218,7 @@ export default function Navbar() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
-              <Link
+              {/* <Link
                 href='/cuenta'
                 className={`py-2 px-4 rounded-full text-sm font-medium ${
                   scrolled
@@ -227,7 +227,7 @@ export default function Navbar() {
                 } transition-colors duration-300`}
               >
                 Mi Cuenta
-              </Link>
+              </Link> */}
             </motion.div>
           </div>
 
@@ -380,36 +380,6 @@ export default function Navbar() {
                     </span>
                   )}
                 </div>
-
-                <Link
-                  href='/cuenta'
-                  onClick={() => setIsOpen(false)}
-                  className={`
-                    flex items-center px-4 py-3 rounded-lg text-base font-medium
-                    ${
-                      scrolled
-                        ? 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50/50'
-                        : 'text-white/80 hover:text-white hover:bg-white/5'
-                    }
-                    transition-colors
-                  `}
-                >
-                  <svg
-                    className='h-5 w-5 mr-2'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'
-                    ></path>
-                  </svg>
-                  Mi Cuenta
-                </Link>
               </motion.div>
             </div>
           </motion.div>

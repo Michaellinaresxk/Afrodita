@@ -19,23 +19,6 @@ const ProductsPage = () => {
   const productsSectionRef = useRef(null);
   const isInView = useInView(productsSectionRef, { once: true, amount: 0.1 });
 
-  // Efecto para hacer el header de filtros sticky
-  useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        const headerPosition = headerRef.current.getBoundingClientRect().top;
-        if (headerPosition <= 0) {
-          setIsSticky(true);
-        } else {
-          setIsSticky(false);
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   // Efecto para filtrar y ordenar productos
   useEffect(() => {
     let result = [...luxuryProducts];
@@ -106,7 +89,7 @@ const ProductsPage = () => {
       {/* Header con imagen de fondo */}
       <div className='relative h-80 bg-primary-900 overflow-hidden'>
         <Image
-          src='/img/jabon.jpg'
+          src='/img/productos/jabon-6.jpg'
           alt='Colección de jabones naturales'
           fill
           style={{ objectFit: 'cover' }}
@@ -379,7 +362,7 @@ const ProductsPage = () => {
           )}
 
           {/* Paginación (simulada) */}
-          {filteredProducts.length > 0 && (
+          {/* {filteredProducts.length > 0 && (
             <div className='mt-12 flex justify-center'>
               <nav
                 className='inline-flex rounded-md shadow-sm -space-x-px'
@@ -446,7 +429,7 @@ const ProductsPage = () => {
                 </a>
               </nav>
             </div>
-          )}
+          )} */}
         </div>
       </div>
     </>

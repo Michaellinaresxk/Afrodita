@@ -144,19 +144,6 @@ export default function Hero() {
                       </svg>
                     </Link>
                   </motion.div>
-
-                  <motion.div
-                    variants={buttonVariants}
-                    custom={1}
-                    whileHover='hover'
-                  >
-                    <Link
-                      href='/sobre-nosotros'
-                      className='bg-white text-primary-800 hover:bg-primary-50 px-8 py-3.5 rounded-full transition-all duration-300 font-medium text-center shadow-lg'
-                    >
-                      Nuestra Historia
-                    </Link>
-                  </motion.div>
                 </div>
               </div>
             </motion.div>

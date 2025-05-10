@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import { luxuryProducts } from '@/constants/products';
 import Breadcrumb from '@/components/products/Breadcrumb';
