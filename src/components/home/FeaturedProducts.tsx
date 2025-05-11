@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
@@ -83,7 +82,7 @@ export default function LuxuryProductSection() {
             >
               {luxuryProducts.map((product) => (
                 <SwiperSlide key={product.id}>
-                  <ProductCard product={product} />
+                  <ProductCard product={product} variants={undefined} />
                 </SwiperSlide>
               ))}
             </Swiper>

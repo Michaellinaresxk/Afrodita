@@ -24,7 +24,7 @@ export default function ContactPage() {
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsSubmitting(true);
 

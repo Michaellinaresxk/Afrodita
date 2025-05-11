@@ -9,7 +9,6 @@ export const categories = [
   { id: 'calmantes', name: 'Calmantes' },
 ];
 
-// Opciones de orden
 export const sortOptions = [
   { value: 'popular', label: 'Más populares' },
   { value: 'newest', label: 'Más nuevos' },
@@ -174,5 +173,36 @@ export const luxuryProducts = [
     border: 'border-neutral-200',
     badgeText: 'Hidratante',
     stock: 14,
+  },
+];
+
+// Reseñas ficticias
+export const productReviews = [
+  {
+    id: 1,
+    author: 'Laura Martínez',
+    date: '15/03/2023',
+    rating: 5,
+    review:
+      'Increíble este jabón. Mi piel se siente hidratada y suave después de usarlo. El aroma es delicado y agradable. Definitivamente lo compraré de nuevo.',
+    avatar: '/img/testimonials/avatar-1.jpg',
+  },
+  {
+    id: 2,
+    author: 'Carlos Rodríguez',
+    date: '27/04/2023',
+    rating: 4,
+    review:
+      'Muy buen producto. Lo uso desde hace un mes y he notado una mejora significativa en mi piel. Solo le quito una estrella porque el tamaño podría ser un poco más grande por el precio.',
+    avatar: '/img/testimonials/avatar-2.jpg',
+  },
+  {
+    id: 3,
+    author: 'Elena García',
+    date: '10/05/2023',
+    rating: 5,
+    review:
+      'Absolutamente enamorada de este jabón. Es perfecto para mi piel sensible, no irrita en absoluto y deja una sensación refrescante. El envase eco-friendly es un gran plus.',
+    avatar: '/img/testimonials/avatar-3.jpg',
   },
 ];

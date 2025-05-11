@@ -7,12 +7,14 @@ import { categories, luxuryProducts, sortOptions } from '@/constants/products';
 import ProductCard from '@/components/products/ProductCard';
 
 const ProductsPage = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [products, setProducts] = useState(luxuryProducts);
   const [filteredProducts, setFilteredProducts] = useState(luxuryProducts);
   const [activeCategory, setActiveCategory] = useState('todos');
   const [sortBy, setSortBy] = useState('popular');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSticky, setIsSticky] = useState(false);
 
   const headerRef = useRef(null);

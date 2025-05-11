@@ -10,15 +10,11 @@ import ProductInfo from '@/components/products/ProductInfo';
 import RelatedProducts from '@/components/products/RelatedProducts';
 
 export default function ProductDetailsPage({ params }) {
-  // En una aplicación real, obtendríamos los datos del producto desde una API basándose en el ID
   const productId = params.id;
-
-  // Simulamos la búsqueda del producto por ID
   const product =
     luxuryProducts.find((p) => p.id.toString() === productId) ||
     luxuryProducts[0];
 
-  // Simulamos productos relacionados
   const relatedProducts = luxuryProducts
     .filter((p) => p.id !== product.id && p.category === product.category)
     .slice(0, 4);

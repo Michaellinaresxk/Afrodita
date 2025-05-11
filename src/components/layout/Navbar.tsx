@@ -26,6 +26,13 @@ export default function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // debugin
+  const isThisCardHovered = () => {
+    setCartCount(cartCount);
+  };
+
+  console.log(isThisCardHovered);
+
   // Enlaces de navegación con su estado activo
   const navLinks = [
     { title: 'Inicio', href: '/' },

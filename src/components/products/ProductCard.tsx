@@ -8,6 +8,11 @@ import Link from 'next/link';
 const ProductCard = ({ product, variants }) => {
   const [isHovered, setIsHovered] = useState(false);
 
+  const isThisCardHovered = () => {
+    setIsHovered(isHovered);
+  };
+
+  console.log(isThisCardHovered);
   return (
     <motion.div
       variants={variants}

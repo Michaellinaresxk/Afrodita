@@ -12,6 +12,7 @@ export default function AboutUsPage() {
   const valuesRef = useRef(null);
 
   const isHeroInView = useInView(heroRef, { once: true, amount: 0.2 });
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const isMissionInView = useInView(missionRef, { once: true, amount: 0.3 });
   const isStoryInView = useInView(storyRef, { once: true, amount: 0.3 });
   const isValuesInView = useInView(valuesRef, { once: true, amount: 0.3 });
