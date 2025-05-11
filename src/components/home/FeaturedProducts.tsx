@@ -63,7 +63,11 @@ export default function LuxuryProductSection() {
             {luxuryProducts
               .filter((product) => product.featured === true)
               .map((product) => (
-                <ProductCard key={product.id} product={product} />
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  variants={undefined}
+                />
               ))}
           </div>
 

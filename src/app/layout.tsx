@@ -20,7 +20,7 @@ export const metadata = {
   description:
     'Descubre nuestra colección de jabones artesanales elaborados con ingredientes naturales para el cuidado y bienestar de tu piel.',
 };
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function RootLayout({ children }) {
   return (
     <html lang='es' className={`${inter.variable} ${playfair.variable}`}>

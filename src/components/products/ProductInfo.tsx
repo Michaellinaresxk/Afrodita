@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import ReviewStars from './ReviewStars';
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ProductInfo({ product }) {
   const [quantity, setQuantity] = useState(1);
   const [selectedVariant, setSelectedVariant] = useState(

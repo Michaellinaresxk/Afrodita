@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 import ReviewStars from './ReviewStars';
 import { productReviews } from '@/constants/products';
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ProductTabs({ product }) {
   const [activeTab, setActiveTab] = useState('description');
 

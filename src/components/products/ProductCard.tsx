@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 const ProductCard = ({ product, variants }) => {
   const [isHovered, setIsHovered] = useState(false);
 

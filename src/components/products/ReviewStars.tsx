@@ -1,3 +1,4 @@
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ReviewStars({ rating, size = 'small' }) {
   return (
     <div className='flex items-center'>

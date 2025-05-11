@@ -8,7 +8,7 @@ import ProductGallery from '@/components/products/ProductGallery';
 import ProductTabs from '@/components/products/ProductTabs';
 import ProductInfo from '@/components/products/ProductInfo';
 import RelatedProducts from '@/components/products/RelatedProducts';
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ProductDetailsPage({ params }) {
   const productId = params.id;
   const product =

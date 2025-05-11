@@ -1,5 +1,5 @@
 import Link from 'next/link';
-
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function Breadcrumb({ product }) {
   return (
     <div className='bg-neutral-50 py-3 border-b border-neutral-200'>

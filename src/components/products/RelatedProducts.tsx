@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
-
+ // @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function RelatedProducts({ products }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });

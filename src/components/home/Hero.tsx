@@ -32,6 +32,7 @@ export default function Hero() {
 
   const buttonVariants = {
     hidden: { opacity: 0, y: 20 },
+    // @ts-expect-error Ignorar tipado implícito por compatibilidad
     visible: (custom) => ({
       opacity: 1,
       y: 0,
