@@ -19,7 +19,21 @@ export default function ContactPage() {
   const formRef = useRef(null);
   const isInView = useInView(formRef, { once: true, amount: 0.3 });
 
-  const handleChange = (e) => {
+  interface FormState {
+    name: string;
+    email: string;
+    subject: string;
+    message: string;
+  }
+
+  interface ChangeEvent {
+    target: {
+      name: keyof FormState;
+      value: string;
+    };
+  }
+
+  const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
     setFormState((prev) => ({ ...prev, [name]: value }));
   };
