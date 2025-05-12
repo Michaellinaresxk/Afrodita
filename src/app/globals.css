@@ -33,3 +33,7 @@ body {
   display: flex;
   align-items: center;
 }
+
+.footer-bg {
+  background-color: #212020;
+}

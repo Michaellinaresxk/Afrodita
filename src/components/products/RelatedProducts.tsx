@@ -4,7 +4,7 @@ import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
- // @ts-expect-error Ignorar tipado implícito por compatibilidad
+// @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function RelatedProducts({ products }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
@@ -70,7 +70,7 @@ export default function RelatedProducts({ products }) {
           className='text-center mt-10'
         >
           <Link
-            href='/productos'
+            href='/products'
             className='inline-flex items-center bg-white text-primary-700 hover:text-primary-800 py-3 px-6 rounded-full font-medium shadow-md hover:shadow-lg transition-all duration-300 border border-primary-100 group'
           >
             <span>Ver todos los productos</span>

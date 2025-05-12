@@ -206,3 +206,29 @@ export const productReviews = [
     avatar: '/img/testimonials/avatar-3.jpg',
   },
 ];
+
+export const descriptions = {
+  'Aceite de Oliva':
+    'Rico en antioxidantes y vitamina E, hidrata profundamente y protege la piel.',
+  'Aceite de Coco':
+    'Nutritivo y antibacteriano, limpia suavemente sin resecar.',
+  Lavanda:
+    'Calmante y relajante, ayuda a equilibrar la piel y tiene propiedades antisépticas.',
+  Miel: 'Hidratante y antibacteriana, ideal para pieles sensibles.',
+  Avena:
+    'Exfoliante suave que calma irritaciones y es perfecta para pieles sensibles.',
+  'Aloe Vera': 'Hidratante, calmante y regenerador para todo tipo de pieles.',
+  Caléndula:
+    'Antiinflamatoria y calmante, perfecta para pieles irritadas o sensibles.',
+  'Arcilla Verde':
+    'Detoxificante y purificante, ideal para pieles grasas o con impurezas.',
+  'Carbón Activado':
+    'Desintoxicante potente que elimina impurezas y exceso de grasa.',
+  Café: 'Exfoliante natural y antioxidante que mejora la circulación y la apariencia de la piel.',
+  Menta:
+    'Refrescante y estimulante, con propiedades antibacterianas y calmantes.',
+  'Rosa Mosqueta':
+    'Rica en ácidos grasos y antioxidantes, regenera y nutre la piel.',
+  Romero:
+    'Estimulante y tonificante, mejora la circulación y tiene propiedades antibacterianas.',
+};

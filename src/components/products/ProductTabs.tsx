@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import ReviewStars from './ReviewStars';
-import { productReviews } from '@/constants/products';
+import { descriptions, productReviews } from '@/constants/products';
 // @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ProductTabs({ product }) {
   const [activeTab, setActiveTab] = useState('description');
@@ -142,12 +142,14 @@ export default function ProductTabs({ product }) {
                       Ingredientes principales
                     </h4>
                     <ul className='list-disc pl-5 space-y-2'>
-                      {product.ingredients.map((ingredient, index) => (
-                        <li key={index} className='text-neutral-600'>
-                          <span className='font-medium'>{ingredient}</span>:{' '}
-                          {getIngredientDescription(ingredient)}
-                        </li>
-                      ))}
+                      {product.ingredients.map(
+                        (ingredient: string[], index: number) => (
+                          <li key={index} className='text-neutral-600'>
+                            <span className='font-medium'>{ingredient}</span>:{' '}
+                            {getIngredientDescription(ingredient)}
+                          </li>
+                        )
+                      )}
                     </ul>
                   </div>
 
@@ -298,13 +300,13 @@ export default function ProductTabs({ product }) {
                       </div>
                     </div>
 
-                    <div className='flex-1 space-y-2'>
+                    {/* <div className='flex-1 space-y-2'>
                       {[5, 4, 3, 2, 1].map((star) => {
                         // Calculamos un porcentaje ficticio para esta demo
-                        const percentage = calculateStarPercentage(
-                          star,
-                          product.rating
-                        );
+                        // const percentage = calculateStarPercentage(
+                        //   star,
+                        //   product.rating
+                        // );
                         return (
                           <div key={star} className='flex items-center'>
                             <div className='text-sm text-neutral-600 w-8'>
@@ -330,7 +332,7 @@ export default function ProductTabs({ product }) {
                           </div>
                         );
                       })}
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </motion.div>
@@ -342,51 +344,12 @@ export default function ProductTabs({ product }) {
   );
 }
 
-// Función para obtener una descripción de ingrediente ficticia
-function getIngredientDescription(ingredient) {
-  const descriptions = {
-    'Aceite de Oliva':
-      'Rico en antioxidantes y vitamina E, hidrata profundamente y protege la piel.',
-    'Aceite de Coco':
-      'Nutritivo y antibacteriano, limpia suavemente sin resecar.',
-    Lavanda:
-      'Calmante y relajante, ayuda a equilibrar la piel y tiene propiedades antisépticas.',
-    Miel: 'Hidratante y antibacteriana, ideal para pieles sensibles.',
-    Avena:
-      'Exfoliante suave que calma irritaciones y es perfecta para pieles sensibles.',
-    'Aloe Vera': 'Hidratante, calmante y regenerador para todo tipo de pieles.',
-    Caléndula:
-      'Antiinflamatoria y calmante, perfecta para pieles irritadas o sensibles.',
-    'Arcilla Verde':
-      'Detoxificante y purificante, ideal para pieles grasas o con impurezas.',
-    'Carbón Activado':
-      'Desintoxicante potente que elimina impurezas y exceso de grasa.',
-    Café: 'Exfoliante natural y antioxidante que mejora la circulación y la apariencia de la piel.',
-    Menta:
-      'Refrescante y estimulante, con propiedades antibacterianas y calmantes.',
-    'Rosa Mosqueta':
-      'Rica en ácidos grasos y antioxidantes, regenera y nutre la piel.',
-    Romero:
-      'Estimulante y tonificante, mejora la circulación y tiene propiedades antibacterianas.',
-  };
+type IngredientKey = keyof typeof descriptions;
 
-  return (
-    descriptions[ingredient] ||
-    'Ingrediente natural seleccionado por sus propiedades beneficiosas para la piel.'
-  );
-}
-
-// Función para calcular el porcentaje de estrellas (simulado para esta demo)
-function calculateStarPercentage(star, rating) {
-  if (star === Math.round(rating)) {
-    return 65;
-  } else if (star === 5 && rating >= 4.5) {
-    return 80;
-  } else if (star === 4 && rating >= 4 && rating < 4.5) {
-    return 50;
-  } else if (star > rating) {
-    return 5 + Math.floor(Math.random() * 10);
-  } else {
-    return 15 + Math.floor(Math.random() * 20);
+export function getIngredientDescription(ingredient: string): string {
+  if (ingredient in descriptions) {
+    return descriptions[ingredient as IngredientKey];
   }
+
+  return 'Ingrediente natural seleccionado por sus propiedades beneficiosas para la piel.';
 }
