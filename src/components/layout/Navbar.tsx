@@ -12,43 +12,41 @@ export default function Navbar() {
   const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
 
-  // Efecto para detectar scroll
+  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 20) {
-        setScrolled(true);
-      } else {
-        setScrolled(false);
-      }
+      setScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    // Add event listener with passive option for better performance
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Initial check
+    handleScroll();
+
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // debugin
-  const isThisCardHovered = () => {
-    setCartCount(cartCount);
-  };
-
-  console.log(isThisCardHovered);
-
-  // Enlaces de navegación con su estado activo
+  // Navigation links with active state
   const navLinks = [
     { title: 'Inicio', href: '/' },
     { title: 'Productos', href: '/products' },
     { title: 'Sobre Nosotros', href: '/about' },
-    // { title: 'Blog', href: '/blog' },
     { title: 'Contacto', href: '/contact' },
   ];
 
-  // Animaciones para el menú móvil
+  // Update cart count - placeholder function for demonstration
+  const updateCartCount = (count) => {
+    setCartCount(count);
+  };
+
+  // Animation variants
   const menuVariants = {
     closed: {
       opacity: 0,
       height: 0,
       transition: {
-        duration: 0.4,
+        duration: 0.3,
         ease: [0.22, 1, 0.36, 1],
         staggerChildren: 0.05,
         staggerDirection: -1,
@@ -81,9 +79,8 @@ export default function Navbar() {
     },
   };
 
-  // Variante para el logo
   const logoVariants = {
-    initial: { opacity: 0, x: -20 },
+    initial: { opacity: 0, x: -10 },
     animate: {
       opacity: 1,
       x: 0,
@@ -91,12 +88,14 @@ export default function Navbar() {
     },
   };
 
-  // Cambios en el navbar al hacer scroll
+  // Dynamic styling based on scroll position
   const navbarClasses = scrolled
     ? 'py-3 bg-white/90 backdrop-blur-md shadow-lg'
     : 'py-5 bg-transparent';
 
-  const navbarBgColor = scrolled ? 'text-primary-800' : 'text-white';
+  const textColorClass = scrolled ? 'text-gray-800' : 'text-white';
+  const accentColorClass = scrolled ? 'bg-emerald-500' : 'bg-white';
+  const hoverBgClass = scrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10';
 
   return (
     <nav
@@ -104,30 +103,22 @@ export default function Navbar() {
     >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center'>
-          {/* Logo con animación */}
+          {/* Logo with animation */}
           <motion.div
             initial='initial'
             animate='animate'
             variants={logoVariants}
           >
             <Link href='/' className='flex items-center'>
-              <div className='relative h-10 w-10 mr-2'>
-                <Image
-                  src='/img/logo.png' // Reemplazar con el logo real
-                  alt='Afrodita'
-                  fill
-                  style={{ objectFit: 'contain' }}
-                />
-              </div>
               <span
-                className={`font-serif text-2xl font-bold ${navbarBgColor} transition-colors duration-300`}
+                className={`font-serif text-2xl font-bold ${textColorClass} transition-colors duration-300`}
               >
-                Afrodita<span className='text-secondary-500'>-</span>
+                Afrodita<span className='text-emerald-500'>.</span>
               </span>
             </Link>
           </motion.div>
 
-          {/* Desktop Navigation con animación en hover y active */}
+          {/* Desktop Navigation */}
           <div className='hidden md:flex space-x-1'>
             {navLinks.map((link, index) => {
               const isActive = pathname === link.href;
@@ -148,23 +139,35 @@ export default function Navbar() {
                       ${
                         scrolled
                           ? isActive
-                            ? 'text-primary-600 font-medium'
-                            : 'text-neutral-600 hover:text-primary-600'
+                            ? 'text-emerald-600 font-medium'
+                            : 'text-gray-600 hover:text-emerald-600'
                           : isActive
                           ? 'text-white font-medium'
                           : 'text-white/90 hover:text-white'
                       }
-                      transition-colors duration-300 font-medium
+                      transition-colors duration-300 font-medium group
                     `}
                   >
                     {link.title}
-                    {isActive && (
+
+                    {/* Animated underline indicator for active link */}
+                    {isActive ? (
                       <motion.span
                         layoutId='activeIndicator'
                         className={`absolute bottom-0 left-0 right-0 h-0.5 mx-2 ${
-                          scrolled ? 'bg-primary-500' : 'bg-white'
+                          scrolled ? 'bg-emerald-500' : 'bg-white'
                         }`}
-                        transition={{ duration: 0.5 }}
+                        transition={{
+                          type: 'spring',
+                          stiffness: 350,
+                          damping: 30,
+                        }}
+                      />
+                    ) : (
+                      <span
+                        className={`absolute bottom-0 left-0 right-0 h-0.5 mx-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${
+                          scrolled ? 'bg-emerald-500/40' : 'bg-white/40'
+                        }`}
                       />
                     )}
                   </Link>
@@ -173,22 +176,23 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Botones de Acción (Desktop) */}
-          <div className='hidden md:flex items-center space-x-2'>
-            {/* Botón Carrito con Animación */}
+          {/* Desktop Action Buttons */}
+          <div className='hidden md:flex items-center space-x-3'>
+            {/* Cart Button with Animation */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
               className='relative'
             >
-              <button
-                className={`p-2 rounded-full ${
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`p-3 rounded-full ${
                   scrolled
-                    ? 'text-neutral-600 hover:text-primary-600 hover:bg-primary-50'
+                    ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/80'
                     : 'text-white/90 hover:text-white hover:bg-white/10'
-                } transition-colors`}
+                } transition-all`}
                 aria-label='Carrito de compras'
               >
                 <svg
@@ -205,36 +209,40 @@ export default function Navbar() {
                     d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
                   ></path>
                 </svg>
-                {cartCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0.5, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className='absolute -top-1 -right-1 bg-secondary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'
-                  >
-                    {cartCount}
-                  </motion.span>
-                )}
-              </button>
+
+                {/* Cart count badge */}
+                <AnimatePresence>
+                  {cartCount > 0 && (
+                    <motion.span
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      exit={{ scale: 0.5, opacity: 0 }}
+                      className='absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
+                    >
+                      {cartCount}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </motion.button>
             </motion.div>
 
-            {/* Botón de Usuario */}
+            {/* Login/Account Button */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.7, duration: 0.3 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
             >
-              {/* <Link
-                href='/cuenta'
-                className={`py-2 px-4 rounded-full text-sm font-medium ${
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`py-2 px-5 rounded-full text-sm font-medium ${
                   scrolled
-                    ? 'bg-primary-600 text-white hover:bg-primary-700'
+                    ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-md hover:shadow-emerald-500/20'
                     : 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20'
-                } transition-colors duration-300`}
+                } transition-all duration-300`}
               >
                 Mi Cuenta
-              </Link> */}
+              </motion.button>
             </motion.div>
           </div>
 
@@ -243,18 +251,62 @@ export default function Navbar() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.3 }}
-            className='md:hidden flex items-center'
+            className='md:hidden flex items-center space-x-2'
           >
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className={`p-2 rounded-lg ${
+            {/* Mobile Cart Button */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className={`p-2 relative rounded-full ${
                 scrolled
-                  ? 'text-neutral-600 hover:text-primary-600'
+                  ? 'text-gray-600 hover:text-emerald-600'
                   : 'text-white/90 hover:text-white'
               } transition-colors`}
-              aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-label='Carrito de compras'
             >
-              <div className='relative w-6 h-6'>
+              <svg
+                className='w-5 h-5'
+                fill='none'
+                stroke='currentColor'
+                viewBox='0 0 24 24'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  strokeLinecap='round'
+                  strokeLinejoin='round'
+                  strokeWidth='2'
+                  d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
+                ></path>
+              </svg>
+
+              {/* Mobile Cart Badge */}
+              <AnimatePresence>
+                {cartCount > 0 && (
+                  <motion.span
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.5, opacity: 0 }}
+                    className='absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
+                  >
+                    {cartCount}
+                  </motion.span>
+                )}
+              </AnimatePresence>
+            </motion.button>
+
+            {/* Mobile Menu Toggle Button */}
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setIsOpen(!isOpen)}
+              className={`p-3 rounded-lg ${
+                scrolled
+                  ? 'text-gray-600 hover:text-emerald-600 hover:bg-gray-100'
+                  : 'text-white/90 hover:text-white hover:bg-white/10'
+              } transition-all`}
+              aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
+              aria-expanded={isOpen}
+            >
+              <div className='relative w-5 h-5'>
                 <AnimatePresence mode='wait'>
                   {isOpen ? (
                     <motion.svg
@@ -263,7 +315,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, rotate: 0 }}
                       exit={{ opacity: 0, rotate: 90 }}
                       transition={{ duration: 0.3 }}
-                      className='w-6 h-6 absolute'
+                      className='w-5 h-5 absolute'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -283,7 +335,7 @@ export default function Navbar() {
                       animate={{ opacity: 1, rotate: 0 }}
                       exit={{ opacity: 0, rotate: -90 }}
                       transition={{ duration: 0.3 }}
-                      className='w-6 h-6 absolute'
+                      className='w-5 h-5 absolute'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -299,12 +351,12 @@ export default function Navbar() {
                   )}
                 </AnimatePresence>
               </div>
-            </button>
+            </motion.button>
           </motion.div>
         </div>
       </div>
 
-      {/* Mobile menu con animaciones */}
+      {/* Mobile menu with animations */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -312,11 +364,13 @@ export default function Navbar() {
             initial='closed'
             animate='open'
             exit='closed'
-            className='md:hidden'
+            className='md:hidden overflow-hidden'
           >
             <div
-              className={`px-4 py-2 space-y-1 ${
-                scrolled ? 'bg-white' : 'bg-primary-900/95 backdrop-blur-md'
+              className={`px-4 py-3 space-y-1 shadow-lg ${
+                scrolled
+                  ? 'bg-white border-t border-gray-100'
+                  : 'bg-gray-900/95 backdrop-blur-md'
               }`}
             >
               {navLinks.map((link) => {
@@ -327,17 +381,16 @@ export default function Navbar() {
                       href={link.href}
                       onClick={() => setIsOpen(false)}
                       className={`
-                        block px-4 py-3 rounded-lg text-base font-medium 
+                        block px-4 py-3 rounded-xl text-base font-medium transition-all
                         ${
                           scrolled
                             ? isActive
-                              ? 'bg-primary-50 text-primary-600'
-                              : 'text-neutral-700 hover:text-primary-600 hover:bg-primary-50/50'
+                              ? 'bg-emerald-50 text-emerald-600 border-l-4 border-emerald-500'
+                              : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/50 hover:border-l-4 hover:border-emerald-500/40'
                             : isActive
-                            ? 'bg-white/10 text-white'
-                            : 'text-white/80 hover:text-white hover:bg-white/5'
+                            ? 'bg-white/10 text-white border-l-4 border-white'
+                            : 'text-white/80 hover:text-white hover:bg-white/5 hover:border-l-4 hover:border-white/40'
                         }
-                        transition-colors
                       `}
                     >
                       {link.title}
@@ -346,47 +399,20 @@ export default function Navbar() {
                 );
               })}
 
-              {/* Mobile Cart & Account */}
+              {/* Mobile Account Button */}
               <motion.div
                 variants={itemVariants}
-                className='pt-2 mt-2 border-t border-primary-200/20'
+                className='pt-3 mt-3 border-t border-gray-200/20'
               >
-                <div className='flex items-center space-x-2 px-4 py-3'>
-                  <button
-                    className={`p-2 rounded-full ${
-                      scrolled
-                        ? 'text-neutral-500 hover:text-primary-600 hover:bg-primary-50'
-                        : 'text-white/80 hover:text-white hover:bg-white/10'
-                    } transition-colors`}
-                  >
-                    <svg
-                      className='h-5 w-5'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
-                      ></path>
-                    </svg>
-                  </button>
-                  <span
-                    className={`${
-                      scrolled ? 'text-neutral-600' : 'text-white/80'
-                    } transition-colors`}
-                  >
-                    Carrito
-                  </span>
-                  {cartCount > 0 && (
-                    <span className='ml-auto bg-secondary-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center'>
-                      {cartCount}
-                    </span>
-                  )}
-                </div>
+                <button
+                  className={`w-full py-3 px-4 rounded-xl text-sm font-medium text-center transition-all ${
+                    scrolled
+                      ? 'bg-emerald-500 text-white hover:bg-emerald-600'
+                      : 'bg-white/10 text-white hover:bg-white/20'
+                  }`}
+                >
+                  Mi Cuenta
+                </button>
               </motion.div>
             </div>
           </motion.div>

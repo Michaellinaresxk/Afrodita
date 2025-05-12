@@ -62,7 +62,7 @@ export function PromotionalBanner() {
                 </p>
                 <div className='flex space-x-2'>
                   <Link
-                    href='/productos'
+                    href='/products'
                     className='text-sm bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg transition-colors font-medium'
                   >
                     Ver productos

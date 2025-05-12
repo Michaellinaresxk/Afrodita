@@ -2,15 +2,21 @@
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
+import { use } from 'react'; // Import React.use
 import { luxuryProducts } from '@/constants/products';
 import Breadcrumb from '@/components/products/Breadcrumb';
 import ProductGallery from '@/components/products/ProductGallery';
 import ProductTabs from '@/components/products/ProductTabs';
 import ProductInfo from '@/components/products/ProductInfo';
 import RelatedProducts from '@/components/products/RelatedProducts';
+import WhatsAppButton from '@/components/ui/WhatsAppButton';
+
 // @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function ProductDetailsPage({ params }) {
-  const productId = params.id;
+  // Use React.use to unwrap the params Promise
+  const unwrappedParams = use(params);
+  const productId = unwrappedParams.id;
+
   const product =
     luxuryProducts.find((p) => p.id.toString() === productId) ||
     luxuryProducts[0];
@@ -34,6 +40,7 @@ export default function ProductDetailsPage({ params }) {
 
   return (
     <>
+      <WhatsAppButton />
       {/* Navegación de migas de pan */}
       <Breadcrumb product={product} />
 

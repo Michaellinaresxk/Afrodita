@@ -3,10 +3,24 @@
 import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
+import {
+  ArrowRight,
+  Check,
+  Leaf,
+  Recycle,
+  ShieldCheck,
+  Clock,
+  CreditCard,
+  HeartHandshake,
+} from 'lucide-react';
 
 export default function Benefits() {
   const ref = useRef(null);
+  const ctaRef = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
+  const isCTAInView = useInView(ctaRef, { once: true, amount: 0.3 });
+
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'end start'],
@@ -15,130 +29,412 @@ export default function Benefits() {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const opacity = useTransform(scrollYProgress, [0, 0.5, 1], [0.6, 1, 0.6]);
 
+  // Variants for animations
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+        delayChildren: 0.3,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
+  // Benefit items data
+  const benefits = [
+    {
+      id: 1,
+      icon: <Leaf className='w-6 h-6' />,
+      title: '100% Natural',
+      description:
+        'Elaborados exclusivamente con ingredientes de origen natural, sin químicos ni fragancias artificiales.',
+      color: 'bg-gradient-to-br from-emerald-50 to-green-100',
+      iconBg: 'bg-gradient-to-br from-emerald-400 to-green-500',
+      borderColor: 'border-emerald-200',
+    },
+    {
+      id: 2,
+      icon: <Recycle className='w-6 h-6' />,
+      title: 'Producción Sostenible',
+      description:
+        'Comprometidos con el medio ambiente utilizando procesos y envases ecológicos que minimizan nuestra huella.',
+      color: 'bg-gradient-to-br from-blue-50 to-cyan-100',
+      iconBg: 'bg-gradient-to-br from-blue-400 to-cyan-500',
+      borderColor: 'border-blue-200',
+    },
+    {
+      id: 3,
+      icon: <ShieldCheck className='w-6 h-6' />,
+      title: 'Dermatológicamente Testado',
+      description:
+        'Formulados para ser suaves y seguros con todo tipo de pieles, incluso las más sensibles.',
+      color: 'bg-gradient-to-br from-rose-50 to-pink-100',
+      iconBg: 'bg-gradient-to-br from-rose-400 to-pink-500',
+      borderColor: 'border-rose-200',
+    },
+  ];
+
+  // Stats data
+  const stats = [
+    {
+      icon: <Check className='w-6 h-6' />,
+      value: '100%',
+      label: 'Ingredientes naturales',
+      color: 'bg-primary-50',
+      iconColor: 'text-primary-600',
+      iconBg: 'bg-primary-100',
+    },
+    {
+      icon: <Clock className='w-6 h-6' />,
+      value: '24/48h',
+      label: 'Entrega en península',
+      color: 'bg-secondary-50',
+      iconColor: 'text-secondary-600',
+      iconBg: 'bg-secondary-100',
+    },
+    {
+      icon: <HeartHandshake className='w-6 h-6' />,
+      value: '10k+',
+      label: 'Clientes satisfechos',
+      color: 'bg-rose-50',
+      iconColor: 'text-rose-600',
+      iconBg: 'bg-rose-100',
+    },
+  ];
+
   return (
-    <section ref={ref} className='py-24 relative overflow-hidden bg-white'>
-      {/* Background Shapes */}
-      <motion.div
-        style={{ y, opacity }}
-        className='absolute inset-0 z-0 flex items-center justify-center'
-      >
-        <div className='absolute top-1/4 left-1/4 w-40 h-40 bg-primary-100 rounded-full blur-2xl opacity-40'></div>
-        <div className='absolute top-1/3 right-1/4 w-64 h-64 bg-secondary-100 rounded-full blur-3xl opacity-50'></div>
-        <div className='absolute bottom-1/4 left-1/3 w-80 h-80 bg-rose-100 rounded-full blur-3xl opacity-60'></div>
+    <section ref={ref} className='py-24 relative overflow-hidden'>
+      {/* Modern glass morphism background elements */}
+      <motion.div style={{ y, opacity }} className='absolute inset-0 z-0'>
+        {/* Organic blob shapes with gradients */}
+        <div className='absolute top-0 left-1/4 w-[600px] h-[600px] rounded-full bg-gradient-to-br from-primary-100/40 to-primary-200/20 blur-3xl opacity-60 transform -translate-y-1/2'></div>
+        <div className='absolute top-1/3 right-1/4 w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-secondary-100/30 to-secondary-200/10 blur-3xl opacity-50'></div>
+        <div className='absolute bottom-0 left-1/3 w-[700px] h-[700px] rounded-full bg-gradient-to-tr from-rose-100/30 to-rose-200/10 blur-3xl opacity-60 transform translate-y-1/2'></div>
+
+        {/* Subtle pattern overlay */}
+        <div
+          className='absolute inset-0 opacity-[0.03]'
+          style={{
+            backgroundImage:
+              'radial-gradient(#000 0.5px, transparent 0.5px), radial-gradient(#000 0.5px, transparent 0.5px)',
+            backgroundSize: '20px 20px',
+            backgroundPosition: '0 0, 10px 10px',
+          }}
+        ></div>
       </motion.div>
 
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-        {/* Title and Description */}
+        {/* Header section with modern typography */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className='text-center mb-12'
+          className='text-center mb-20'
         >
-          <span className='inline-block text-sm font-medium text-primary-600 mb-2 tracking-wider uppercase bg-primary-50 px-3 py-1 rounded-full'>
-            Jabones naturales
-          </span>
-          <h2 className='font-serif text-3xl md:text-4xl font-bold text-primary-900 mb-4'>
-            Beneficios para tu piel y el planeta
+          {/* Heading with decorative elements */}
+          <h2 className='font-serif text-4xl md:text-5xl font-bold text-primary-900 mb-6 relative inline-block'>
+            Beneficios para
+            <span className='relative whitespace-nowrap'>
+              <span className='relative z-10'> tu piel</span>
+              <svg
+                className='absolute -bottom-2 left-0 w-full z-0'
+                viewBox='0 0 200 10'
+                xmlns='http://www.w3.org/2000/svg'
+              >
+                <path
+                  d='M0,5 Q50,9 100,5 T200,5'
+                  fill='none'
+                  stroke='#F9D4DD'
+                  strokeWidth='4'
+                />
+              </svg>
+            </span>{' '}
+            y el planeta
           </h2>
-          <p className='text-neutral-600 max-w-2xl mx-auto'>
+
+          <p className='text-neutral-600 max-w-2xl mx-auto text-lg leading-relaxed'>
             Descubre por qué nuestros jabones artesanales son la elección
             perfecta para el cuidado diario de tu piel, combinando la tradición
             artesanal con ingredientes naturales de la más alta calidad.
           </p>
         </motion.div>
 
-        {/* Benefits Section */}
+        {/* Modern Benefits Cards */}
+        <motion.div
+          variants={containerVariants}
+          initial='hidden'
+          animate={isInView ? 'visible' : 'hidden'}
+          className='grid grid-cols-1 md:grid-cols-3 gap-8 mb-24'
+        >
+          {benefits.map((benefit) => (
+            <motion.div
+              key={benefit.id}
+              variants={itemVariants}
+              className={`relative overflow-hidden rounded-2xl border ${benefit.borderColor} ${benefit.color} p-1 shadow-md hover:shadow-lg transition-shadow duration-300 group`}
+            >
+              {/* Card inner with glass effect */}
+              <div className='bg-white/80 backdrop-blur-sm rounded-xl p-6 h-full flex flex-col relative overflow-hidden'>
+                {/* Decorative corner */}
+                <div className='absolute -top-10 -right-10 w-20 h-20 rounded-full bg-gradient-to-br from-white/80 to-white/20 border-b border-r border-white/10'></div>
+
+                {/* Icon */}
+                <div
+                  className={`${benefit.iconBg} text-white w-14 h-14 rounded-xl shadow-lg flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300`}
+                >
+                  {benefit.icon}
+                </div>
+
+                <h3 className='text-xl font-bold text-primary-900 mb-3'>
+                  {benefit.title}
+                </h3>
+
+                <p className='text-neutral-600 text-sm leading-relaxed flex-grow'>
+                  {benefit.description}
+                </p>
+
+                {/* Learn more button */}
+                <div className='mt-5 pt-3 border-t border-neutral-100'>
+                  <button className='text-primary-600 text-sm font-medium inline-flex items-center group/btn'>
+                    <span>Saber más</span>
+                    <ArrowRight className='ml-1 w-4 h-4 group-hover/btn:translate-x-1 transition-transform' />
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Modern feature highlight section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
+          transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          className='relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-primary-50 to-white border border-primary-100 shadow-xl'
+        >
+          <div className='absolute top-0 right-0 w-1/2 h-full z-0 overflow-hidden'>
+            <Image
+              src='/img/productos/jabon-5.jpg'
+              alt='Ingredientes naturales'
+              width={600}
+              height={500}
+              className='object-cover object-center w-full h-full opacity-70'
+            />
+            <div className='absolute inset-0 bg-gradient-to-l from-transparent to-primary-50/95'></div>
+          </div>
+
+          <div className='relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-12'>
+            <div>
+              <div className='inline-flex items-center px-3 py-1 rounded-full bg-white shadow-sm border border-primary-100 mb-4'>
+                <span className='text-xs font-medium text-primary-700'>
+                  Compromiso con la calidad
+                </span>
+              </div>
+
+              <h3 className='text-2xl font-serif font-bold text-primary-900 mb-4'>
+                Solo utilizamos ingredientes de la más alta calidad
+              </h3>
+
+              <p className='text-neutral-600 mb-6'>
+                Cada jabón está elaborado cuidadosamente en pequeños lotes,
+                utilizando el método tradicional de saponificación en frío para
+                preservar todas las propiedades beneficiosas de los aceites
+                esenciales y extractos botánicos.
+              </p>
+
+              <ul className='space-y-3'>
+                {[
+                  'Aceites vegetales prensados en frío',
+                  'Hierbas y plantas cultivadas orgánicamente',
+                  'Arcillas minerales purificantes',
+                  'Extractos botánicos puros',
+                ].map((item, index) => (
+                  <li key={index} className='flex items-start'>
+                    <div className='flex-shrink-0 w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center mt-0.5 mr-3'>
+                      <Check className='w-3 h-3' />
+                    </div>
+                    <span className='text-neutral-700'>{item}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <div className='mt-8'>
+                <Link
+                  href='/about'
+                  className='inline-flex items-center text-primary-700 font-medium hover:text-primary-800 transition-colors'
+                >
+                  <span>Conoce nuestro proceso</span>
+                  <ArrowRight className='ml-2 w-4 h-4' />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Stats section with neumorphic design */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 bg-neutral-50 rounded-2xl shadow-md p-8 md:p-12'
+          className='grid grid-cols-1 md:grid-cols-3 gap-6'
         >
-          {/* Benefit 1 */}
-          <div className='flex items-start'>
-            <div className='w-12 h-12 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-4'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M5 13l4 4L19 7'
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className='text-lg font-semibold text-primary-800 mb-1'>
-                100% Natural
-              </h3>
-              <p className='text-neutral-600 text-sm'>
-                Sin químicos ni fragancias artificiales.
-              </p>
-            </div>
-          </div>
+          {stats.map((stat, index) => (
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 20 }}
+              animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+              transition={{ duration: 0.5, delay: 0.1 * index + 0.6 }}
+              className={`${stat.color} rounded-2xl p-8 shadow-sm border border-neutral-100 overflow-hidden relative group hover:shadow-md transition-shadow duration-300`}
+            >
+              {/* Decorative elements */}
+              <div className='absolute -top-12 -right-12 w-24 h-24 rounded-full bg-white/50 opacity-50 group-hover:scale-110 transition-transform duration-500'></div>
+              <div className='absolute -bottom-16 -left-10 w-32 h-32 rounded-full bg-white/30 opacity-40 group-hover:scale-110 transition-transform duration-500'></div>
 
-          {/* Benefit 2 */}
-          <div className='flex items-start'>
-            <div className='w-12 h-12 rounded-full bg-secondary-100 text-secondary-600 flex items-center justify-center mr-4'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className='text-lg font-semibold text-primary-800 mb-1'>
-                Producción Sostenible
-              </h3>
-              <p className='text-neutral-600 text-sm'>
-                Respetuoso con el medio ambiente.
-              </p>
-            </div>
-          </div>
+              <div className='relative'>
+                <div
+                  className={`inline-flex items-center justify-center w-16 h-16 rounded-2xl ${stat.iconBg} ${stat.iconColor} mb-5 shadow-sm group-hover:scale-105 transition-transform duration-300`}
+                >
+                  {stat.icon}
+                </div>
 
-          {/* Benefit 3 */}
-          <div className='flex items-start'>
-            <div className='w-12 h-12 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center mr-4'>
-              <svg
-                className='w-6 h-6'
-                fill='none'
-                stroke='currentColor'
-                viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  strokeWidth='2'
-                  d='M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'
-                />
-              </svg>
-            </div>
-            <div>
-              <h3 className='text-lg font-semibold text-primary-800 mb-1'>
-                Dermatológicamente Testado
-              </h3>
-              <p className='text-neutral-600 text-sm'>
-                Suave con todo tipo de pieles.
-              </p>
-            </div>
-          </div>
+                <div className='mb-2 flex items-baseline'>
+                  <span className='text-4xl font-bold text-primary-900'>
+                    {stat.value}
+                  </span>
+                </div>
+
+                <span className='text-neutral-600'>{stat.label}</span>
+              </div>
+            </motion.div>
+          ))}
         </motion.div>
+      </div>
+
+      {/* Modern CTA Section with glass morphism */}
+      <div
+        ref={ctaRef}
+        className='mt-24 pt-16 pb-20 bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900 relative overflow-hidden'
+      >
+        {/* Decorative elements */}
+        <div
+          className='absolute top-0 left-0 w-full h-24 bg-white'
+          style={{
+            clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 70%)',
+          }}
+        ></div>
+
+        <div className='absolute -top-20 -right-20 w-96 h-96 rounded-full bg-primary-700/50 blur-3xl'></div>
+        <div className='absolute -bottom-20 -left-20 w-96 h-96 rounded-full bg-secondary-800/30 blur-3xl'></div>
+
+        {/* Subtle pattern */}
+        <div
+          className='absolute inset-0 opacity-10'
+          style={{
+            backgroundImage:
+              'radial-gradient(rgba(255, 255, 255, 0.3) 1px, transparent 1px)',
+            backgroundSize: '20px 20px',
+          }}
+        ></div>
+
+        <div className=' mx-auto px-4 sm:px-6 lg:px-8 relative z-10 CTA-bg'>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isCTAInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            className='max-w-4xl mx-auto text-center'
+          >
+            <div className='inline-flex items-center px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-sm mb-6 border border-white/20'>
+              <span className='text-sm font-medium text-white/90'>
+                Calidad artesanal
+              </span>
+            </div>
+
+            <h2 className='font-serif text-4xl md:text-5xl font-bold mb-6 text-white leading-tight'>
+              Descubre la diferencia de
+              <span className='relative whitespace-nowrap'>
+                <span className='relative z-10 ml-2 text-secondary-200'>
+                  Afrodita
+                </span>
+                <svg
+                  className='absolute -bottom-1 left-0 w-full z-0'
+                  viewBox='0 0 200 10'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    d='M0,5 Q50,9 100,5 T200,5'
+                    fill='none'
+                    stroke='rgba(255,255,255,0.3)'
+                    strokeWidth='3'
+                  />
+                </svg>
+              </span>
+              <span className='text-secondary-200'> Jabones</span>
+            </h2>
+
+            <p className='text-lg mb-10 max-w-3xl mx-auto text-white/80 leading-relaxed'>
+              Explora nuestra colección de jabones artesanales y productos para
+              el cuidado de la piel, elaborados con ingredientes naturales
+              seleccionados para nutrir tu piel y respetar el planeta.
+            </p>
+
+            <div className='flex flex-col sm:flex-row gap-4 justify-center'>
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+                className='relative group'
+              >
+                <div className='absolute inset-0 bg-white/20 blur-md opacity-80 group-hover:opacity-100 transition-opacity rounded-full'></div>
+                <Link
+                  href='/products'
+                  className='relative inline-flex items-center bg-white hover:bg-neutral-50 text-primary-800 font-medium py-3.5 px-8 rounded-full shadow-xl hover:shadow-2xl transition-all'
+                >
+                  <span>Ver productos</span>
+                  <ArrowRight className='ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform' />
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Link
+                  href='/contact'
+                  className='inline-flex items-center bg-transparent text-white font-medium py-3.5 px-8 rounded-full transition-all border border-white/30 hover:bg-white/10'
+                >
+                  <span>Contactanos</span>
+                  <ArrowRight className='ml-2 w-5 h-5' />
+                </Link>
+              </motion.div>
+            </div>
+
+            {/* Trust badges */}
+            <div className='flex flex-wrap justify-center gap-6 mt-10 pt-6 border-t border-white/10'>
+              <div className='flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2'>
+                <CreditCard className='w-4 h-4 mr-2 text-secondary-200' />
+                <span className='text-sm text-white/90'>Pago 100% seguro</span>
+              </div>
+
+              <div className='flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2'>
+                <Check className='w-4 h-4 mr-2 text-secondary-200' />
+                <span className='text-sm text-white/90'>Envío gratis +50€</span>
+              </div>
+
+              <div className='flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2'>
+                <Clock className='w-4 h-4 mr-2 text-secondary-200' />
+                <span className='text-sm text-white/90'>Entrega 24/48h</span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
       </div>
 
       {/* Decorative Bubbles */}
@@ -146,7 +442,7 @@ export default function Benefits() {
         {[...Array(10)].map((_, i) => (
           <motion.div
             key={i}
-            className='absolute bottom-0 rounded-full bg-white/50 backdrop-blur-sm'
+            className='absolute bottom-0 rounded-full bg-gradient-to-r from-white/60 to-white/30 backdrop-blur-sm'
             style={{
               left: `${Math.random() * 100}%`,
               width: `${Math.random() * 40 + 10}px`,
@@ -156,6 +452,7 @@ export default function Benefits() {
               y: [200, -100],
               x: [0, Math.random() * 40 - 20],
               opacity: [0, 0.7, 0],
+              scale: [0.8, 1.2, 1],
             }}
             transition={{
               duration: Math.random() * 5 + 5,
@@ -166,133 +463,6 @@ export default function Benefits() {
           />
         ))}
       </div>
-
-      {/* CTA Section */}
-      <section className='py-16 bg-primary-900 relative overflow-hidden CTA-bg'>
-        <div className='absolute -top-10 -right-10 w-64 h-64 rounded-full bg-primary-800/50 blur-3xl'></div>
-        <div className='absolute -bottom-10 -left-10 w-64 h-64 rounded-full bg-secondary-900/30 blur-3xl'></div>
-        <div className='absolute inset-0 pattern-dots opacity-10'></div>
-
-        <div className='container mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-          <div className='max-w-4xl mx-auto text-center'>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7 }}
-            >
-              <h2 className='font-serif text-3xl md:text-4xl font-bold mb-6 text-white'>
-                Descubre la diferencia de Afrodita Jabones
-              </h2>
-              <p className=' text-lg mb-8 max-w-3xl mx-auto text-neutral-200'>
-                Explora nuestra colección de jabones artesanales y productos
-                para el cuidado de la piel, elaborados con ingredientes
-                naturales seleccionados para nutrir tu piel y respetar el
-                planeta.
-              </p>
-              <Link
-                href='/products'
-                className='inline-flex items-center bg-white hover:bg-neutral-100 text-primary-800 font-medium py-3 px-8 rounded-full shadow-lg hover:shadow-xl transition-all'
-              >
-                Ver productos
-                <svg
-                  className='ml-2 w-5 h-5'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth={2}
-                    d='M14 5l7 7m0 0l-7 7m7-7H3'
-                  />
-                </svg>
-              </Link>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* Additional Info Section */}
-      <motion.div
-        initial={{ opacity: 0, y: 40 }}
-        animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
-        transition={{ duration: 0.8, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className='mt-16 grid grid-cols-1 md:grid-cols-3 gap-8'
-      >
-        {/* Info 1 */}
-        <div className='bg-primary-50 rounded-xl p-6 text-center'>
-          <div className='inline-flex items-center justify-center w-14 h-14 rounded-full bg-primary-100 text-primary-600 mb-4'>
-            <svg
-              className='w-6 h-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
-          </div>
-          <span className='block text-3xl font-bold text-primary-800 mb-1'>
-            Satisfacción garantizada
-          </span>
-          <span className='text-neutral-600'>O te devolvemos tu dinero</span>
-        </div>
-
-        {/* Info 2 */}
-        <div className='bg-secondary-50 rounded-xl p-6 text-center'>
-          <div className='inline-flex items-center justify-center w-14 h-14 rounded-full bg-secondary-100 text-secondary-600 mb-4'>
-            <svg
-              className='w-6 h-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M13 10V3L4 14h7v7l9-11h-7z'
-              />
-            </svg>
-          </div>
-          <span className='block text-3xl font-bold text-primary-800 mb-1'>
-            Envío rápido
-          </span>
-          <span className='text-neutral-600'>En 24-48 horas en península</span>
-        </div>
-
-        {/* Info 3 */}
-        <div className='bg-rose-50 rounded-xl p-6 text-center'>
-          <div className='inline-flex items-center justify-center w-14 h-14 rounded-full bg-rose-100 text-rose-600 mb-4'>
-            <svg
-              className='w-6 h-6'
-              fill='none'
-              stroke='currentColor'
-              viewBox='0 0 24 24'
-              xmlns='http://www.w3.org/2000/svg'
-            >
-              <path
-                strokeLinecap='round'
-                strokeLinejoin='round'
-                strokeWidth='2'
-                d='M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z'
-              />
-            </svg>
-          </div>
-          <span className='block text-3xl font-bold text-primary-800 mb-1'>
-            Atención personalizada
-          </span>
-          <span className='text-neutral-600'>Estamos aquí para ayudarte</span>
-        </div>
-      </motion.div>
     </section>
   );
 }

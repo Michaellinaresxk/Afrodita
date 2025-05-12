@@ -5,6 +5,7 @@ import { motion, AnimatePresence, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { categories, luxuryProducts, sortOptions } from '@/constants/products';
 import ProductCard from '@/components/products/ProductCard';
+import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 const ProductsPage = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -88,6 +89,7 @@ const ProductsPage = () => {
 
   return (
     <>
+      <WhatsAppButton />
       {/* Header con imagen de fondo */}
       <div className='relative h-80 bg-primary-900 overflow-hidden'>
         <Image

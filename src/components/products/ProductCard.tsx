@@ -51,7 +51,7 @@ const ProductCard = ({ product, variants }) => {
             <motion.button
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.95 }}
-              className='bg-primary-500 hover:bg-primary-600 text-white p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400'
+              className='bg-primary-500 hover:bg-primary-600  p-2 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-400'
               aria-label='Añadir al carrito'
             >
               <svg

@@ -36,21 +36,54 @@ export default function LuxuryProductSection() {
           initial={{ opacity: 0, y: -20 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
           transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className='text-center mb-16'
+          className='text-center mb-20'
         >
-          <span className='inline-block text-sm font-medium text-primary-600 mb-2 tracking-wider uppercase bg-primary-50 px-4 py-1 rounded-full border border-primary-100'>
+          {/* Badge con diseño minimalista y efecto de gradiente sutil */}
+          <motion.span
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.3, duration: 0.5 }}
+            className='inline-block text-xs font-medium text-primary-700 mb-4 tracking-wider uppercase px-4 py-1.5 rounded-full bg-gradient-to-r from-primary-50 to-primary-100/70 border border-primary-100/50 shadow-sm'
+          >
             Colección premium
-          </span>
-          <h2 className='font-serif text-3xl md:text-4xl font-bold text-primary-900 mb-5'>
-            Jabones Artesanales de Lujo
+          </motion.span>
+
+          {/* Título con tipografía más contemporánea y espaciado optimizado */}
+          <h2 className='font-serif text-4xl md:text-5xl font-bold text-primary-800 mb-6 tracking-tight leading-tight'>
+            <span className='relative'>
+              <span className='relative z-10'>Jabones Artesanales</span>
+              <span className='absolute bottom-1 left-0 w-full h-3 bg-secondary-200/30 -z-0 transform -rotate-1'></span>
+            </span>{' '}
+            <span className='text-primary-700'>de Lujo</span>
           </h2>
-          <p className='text-neutral-600 max-w-2xl mx-auto'>
+
+          {/* Descripción con mejor contraste y legibilidad */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.5, duration: 0.5 }}
+            className='text-neutral-600 max-w-2xl mx-auto text-lg leading-relaxed'
+          >
             Descubre nuestra exquisita colección de jabones premium elaborados
             con los ingredientes más selectos y técnicas artesanales para el
-            cuidado sublime de tu piel.
-          </p>
-        </motion.div>
+            <span className='relative inline-block px-1'>
+              <span className='relative z-10 text-primary-700 font-medium'>
+                cuidado sublime
+              </span>
+              <span className='absolute bottom-0 left-0 w-full h-2 bg-primary-100 -z-0'></span>
+            </span>{' '}
+            de tu piel.
+          </motion.p>
 
+          {/* Elementos decorativos modernos */}
+          <div className='flex justify-center mt-8'>
+            <div className='flex items-center space-x-3'>
+              <div className='w-8 h-1 rounded-full bg-primary-300'></div>
+              <div className='w-2 h-2 rounded-full bg-primary-500'></div>
+              <div className='w-8 h-1 rounded-full bg-primary-300'></div>
+            </div>
+          </div>
+        </motion.div>
         {/* Productos destacados en formato de carrusel para asegurar que se muestren en fila */}
         <motion.div
           variants={containerVariants}
