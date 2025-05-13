@@ -107,11 +107,11 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
         {/* Precio con posible descuento */}
         <div className='flex items-center gap-3 mb-6'>
           <span className='text-3xl font-bold text-primary-800'>
-            {product.price.toFixed(2)}€
+            RD$ {product.price.toFixed(2)}
           </span>
           {product.oldPrice && (
             <span className='text-xl text-neutral-400 line-through'>
-              {product.oldPrice.toFixed(2)}€
+              RD$ {product.oldPrice.toFixed(2)}
             </span>
           )}
           {product.oldPrice && (
@@ -220,7 +220,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleAddToCart}
-          className='relative flex-1 overflow-hidden bg-primary-600 hover:bg-primary-700 text-white font-medium px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group'
+          className='relative flex-1 overflow-hidden bg-green-600 hover:bg-primary-700 text-white font-medium px-8 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center group'
         >
           <span className='relative z-10 flex items-center'>
             <svg
@@ -237,7 +237,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
                 d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
               ></path>
             </svg>
-            Añadir al Carrito
+            Comprar Ahora
           </span>
           <div className='absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine' />
         </motion.button>
@@ -262,7 +262,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           </svg>
           <span>
             <span className='font-medium'>Envío gratuito</span> en pedidos
-            superiores a 50€
+            superiores a RD$ 50
           </span>
         </div>
 

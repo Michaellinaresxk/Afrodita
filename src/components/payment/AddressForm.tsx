@@ -145,11 +145,9 @@ const AddressForm = ({ shippingInfo, handleChange, onSubmit }) => {
             className='w-full px-4 py-2 border border-neutral-300 rounded-lg focus:ring-primary-500 focus:border-primary-500'
             required
           >
-            <option value='España'>España</option>
-            <option value='Portugal'>Portugal</option>
-            <option value='Francia'>Francia</option>
-            <option value='Italia'>Italia</option>
-            <option value='Alemania'>Alemania</option>
+            <option value='Santo Domingo'>Santo Domingo</option>
+            <option value='Santiago'>Santiago</option>
+            <option value='Higuey'>Higuey</option>
           </select>
         </div>
       </div>
@@ -198,9 +196,7 @@ const AddressForm = ({ shippingInfo, handleChange, onSubmit }) => {
                   Entrega garantizada al día siguiente
                 </span>
               </span>
-              <span className='text-sm font-medium text-neutral-800'>
-                5,99€
-              </span>
+              <span className='text-sm font-medium text-neutral-800'>5,99</span>
             </span>
           </label>
         </div>
