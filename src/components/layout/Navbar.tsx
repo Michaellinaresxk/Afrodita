@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
+
 import { motion, AnimatePresence } from 'framer-motion';
 import { usePathname } from 'next/navigation';
+import { useCart } from '../../context/CartContext';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [cartCount, setCartCount] = useState(0);
   const pathname = usePathname();
+
+  // Usar el contexto del carrito para obtener el contador y la función para abrir el carrito
+  const { cartCount, setIsCartOpen } = useCart();
 
   // Handle scroll effect
   useEffect(() => {
@@ -34,11 +37,6 @@ export default function Navbar() {
     { title: 'Sobre Nosotros', href: '/about' },
     { title: 'Contacto', href: '/contact' },
   ];
-
-  // Update cart count - placeholder function for demonstration
-  const updateCartCount = (count) => {
-    setCartCount(count);
-  };
 
   // Animation variants
   const menuVariants = {
@@ -94,8 +92,6 @@ export default function Navbar() {
     : 'py-5 bg-transparent';
 
   const textColorClass = scrolled ? 'text-gray-800' : 'text-white';
-  const accentColorClass = scrolled ? 'bg-emerald-500' : 'bg-white';
-  const hoverBgClass = scrolled ? 'hover:bg-gray-100' : 'hover:bg-white/10';
 
   return (
     <nav
@@ -188,6 +184,7 @@ export default function Navbar() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => setIsCartOpen(true)} // Abre el SideCart al hacer clic
                 className={`p-3 rounded-full ${
                   scrolled
                     ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/80'
@@ -257,6 +254,7 @@ export default function Navbar() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => setIsCartOpen(true)} // Abre el SideCart en móvil también
               className={`p-2 relative rounded-full ${
                 scrolled
                   ? 'text-gray-600 hover:text-emerald-600'

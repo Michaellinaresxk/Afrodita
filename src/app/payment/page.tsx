@@ -23,7 +23,7 @@ export default function PaymentPage() {
     address: '',
     city: '',
     postalCode: '',
-    country: 'España',
+    country: 'Republica Dominicana',
   });
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [isProcessing, setIsProcessing] = useState(false);

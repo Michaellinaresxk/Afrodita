@@ -35,8 +35,8 @@ export default function Footer() {
         <div className='absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-green-600/20 blur-3xl'></div>
       </div>
 
-      <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10'>
+      <div className='max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 relative z-10'>
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10'>
           {/* Brand */}
           <motion.div
             initial='hidden'
@@ -64,43 +64,6 @@ export default function Footer() {
               técnicas tradicionales para el cuidado completo y sublime de tu
               piel.
             </p>
-
-            {/* Certificaciones */}
-            <div className='mt-6 flex space-x-4'>
-              <div
-                className='bg-white/10 p-2 rounded-full'
-                title='100% Natural'
-              >
-                <Image
-                  src='/img/icons/leaf.svg'
-                  width={20}
-                  height={20}
-                  alt='100% Natural'
-                />
-              </div>
-              <div
-                className='bg-white/10 p-2 rounded-full'
-                title='Cruelty Free'
-              >
-                <Image
-                  src='/img/icons/heart.svg'
-                  width={20}
-                  height={20}
-                  alt='Cruelty Free'
-                />
-              </div>
-              <div
-                className='bg-white/10 p-2 rounded-full'
-                title='Eco Friendly'
-              >
-                <Image
-                  src='/img/icons/recycle.svg'
-                  width={20}
-                  height={20}
-                  alt='Eco Friendly'
-                />
-              </div>
-            </div>
           </motion.div>
 
           {/* Enlaces Rápidos */}
@@ -224,84 +187,12 @@ export default function Footer() {
                 <div>
                   <p className='text-sm text-neutral-300'>Dirección:</p>
                   <address className='text-sm text-white not-italic'>
-                    Calle Botánica 123, <br />
-                    28023 Madrid, España
+                    Calle Central esq. Mella <br />
+                    Santo Domingo, RD
                   </address>
                 </div>
               </li>
             </ul>
-          </motion.div>
-
-          {/* Newsletter */}
-          <motion.div
-            initial='hidden'
-            animate='visible'
-            variants={itemVariant}
-            className='mt-8 md:mt-0'
-          >
-            <h3 className='text-lg font-semibold mb-5 border-b border-green-500/30 pb-2'>
-              Newsletter
-            </h3>
-            <p className='text-sm text-neutral-300 mb-4'>
-              Suscríbete para recibir las últimas novedades, consejos de belleza
-              natural y ofertas exclusivas.
-            </p>
-            <form onSubmit={handleSubmit} className='relative'>
-              <input
-                type='email'
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder='Tu email'
-                className='w-full px-4 py-3 bg-white/10 border border-white/20 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-400 text-sm placeholder-white/50'
-                required
-              />
-              <button
-                type='submit'
-                className='mt-3 w-full bg-green-500 hover:bg-green-600 text-white px-4 py-2.5 rounded-lg transition-colors font-medium text-sm flex items-center justify-center'
-              >
-                {isSubmitted ? (
-                  <>
-                    <svg
-                      className='w-4 h-4 mr-2'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M5 13l4 4L19 7'
-                      ></path>
-                    </svg>
-                    ¡Suscrito con éxito!
-                  </>
-                ) : (
-                  <>
-                    Suscribirme
-                    <svg
-                      className='ml-2 w-4 h-4'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M14 5l7 7m0 0l-7 7m7-7H3'
-                      ></path>
-                    </svg>
-                  </>
-                )}
-              </button>
-              <p className='text-xs text-white/50 mt-2'>
-                Respetamos tu privacidad. Puedes darte de baja en cualquier
-                momento.
-              </p>
-            </form>
           </motion.div>
         </div>
 

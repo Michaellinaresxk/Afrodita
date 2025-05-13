@@ -4,16 +4,8 @@ import { useRef } from 'react';
 import { motion, useInView, useScroll, useTransform } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
-import {
-  ArrowRight,
-  Check,
-  Leaf,
-  Recycle,
-  ShieldCheck,
-  Clock,
-  CreditCard,
-  HeartHandshake,
-} from 'lucide-react';
+import { ArrowRight, Check, Clock, CreditCard } from 'lucide-react';
+import { benefits, stats } from '@/constants/benefitsItems';
 
 export default function Benefits() {
   const ref = useRef(null);
@@ -49,68 +41,6 @@ export default function Benefits() {
       transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
     },
   };
-
-  // Benefit items data
-  const benefits = [
-    {
-      id: 1,
-      icon: <Leaf className='w-6 h-6' />,
-      title: '100% Natural',
-      description:
-        'Elaborados exclusivamente con ingredientes de origen natural, sin químicos ni fragancias artificiales.',
-      color: 'bg-gradient-to-br from-emerald-50 to-green-100',
-      iconBg: 'bg-gradient-to-br from-emerald-400 to-green-500',
-      borderColor: 'border-emerald-200',
-    },
-    {
-      id: 2,
-      icon: <Recycle className='w-6 h-6' />,
-      title: 'Producción Sostenible',
-      description:
-        'Comprometidos con el medio ambiente utilizando procesos y envases ecológicos que minimizan nuestra huella.',
-      color: 'bg-gradient-to-br from-blue-50 to-cyan-100',
-      iconBg: 'bg-gradient-to-br from-blue-400 to-cyan-500',
-      borderColor: 'border-blue-200',
-    },
-    {
-      id: 3,
-      icon: <ShieldCheck className='w-6 h-6' />,
-      title: 'Dermatológicamente Testado',
-      description:
-        'Formulados para ser suaves y seguros con todo tipo de pieles, incluso las más sensibles.',
-      color: 'bg-gradient-to-br from-rose-50 to-pink-100',
-      iconBg: 'bg-gradient-to-br from-rose-400 to-pink-500',
-      borderColor: 'border-rose-200',
-    },
-  ];
-
-  // Stats data
-  const stats = [
-    {
-      icon: <Check className='w-6 h-6' />,
-      value: '100%',
-      label: 'Ingredientes naturales',
-      color: 'bg-primary-50',
-      iconColor: 'text-primary-600',
-      iconBg: 'bg-primary-100',
-    },
-    {
-      icon: <Clock className='w-6 h-6' />,
-      value: '24/48h',
-      label: 'Entrega en península',
-      color: 'bg-secondary-50',
-      iconColor: 'text-secondary-600',
-      iconBg: 'bg-secondary-100',
-    },
-    {
-      icon: <HeartHandshake className='w-6 h-6' />,
-      value: '10k+',
-      label: 'Clientes satisfechos',
-      color: 'bg-rose-50',
-      iconColor: 'text-rose-600',
-      iconBg: 'bg-rose-100',
-    },
-  ];
 
   return (
     <section ref={ref} className='py-24 relative overflow-hidden'>
@@ -219,7 +149,7 @@ export default function Benefits() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className='relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-primary-50 to-white border border-primary-100 shadow-xl'
+          className='relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-primary-50 to-white  border-primary-100 shadow-xl'
         >
           <div className='absolute top-0 right-0 w-1/2 h-full z-0 overflow-hidden'>
             <Image
@@ -425,7 +355,9 @@ export default function Benefits() {
 
               <div className='flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2'>
                 <Check className='w-4 h-4 mr-2 text-secondary-200' />
-                <span className='text-sm text-white/90'>Envío gratis +50€</span>
+                <span className='text-sm text-white/90'>
+                  Envío gratis + RD$ 50
+                </span>
               </div>
 
               <div className='flex items-center bg-white/10 backdrop-blur-sm rounded-full px-4 py-2'>

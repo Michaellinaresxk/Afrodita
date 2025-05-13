@@ -51,10 +51,10 @@ const OrderSummary = ({
                 )}
                 <div className='flex justify-between mt-1 text-sm'>
                   <span className='text-neutral-600'>
-                    {item.quantity} x {item.price.toFixed(2)}€
+                    {item.quantity} x {item.price.toFixed(2)}RD
                   </span>
                   <span className='font-medium text-neutral-800'>
-                    {(item.price * item.quantity).toFixed(2)}€
+                    {(item.price * item.quantity).toFixed(2)}RD
                   </span>
                 </div>
               </div>
@@ -67,19 +67,19 @@ const OrderSummary = ({
           <div className='flex justify-between text-sm'>
             <span className='text-neutral-600'>Subtotal</span>
             <span className='font-medium text-neutral-800'>
-              {subtotal.toFixed(2)}€
+              RD$ {subtotal.toFixed(2)}
             </span>
           </div>
           <div className='flex justify-between text-sm'>
             <span className='text-neutral-600'>Envío</span>
             <span className='font-medium text-neutral-800'>
-              {shipping === 0 ? 'Gratis' : `${shipping.toFixed(2)}€`}
+              {shipping === 0 ? 'Gratis' : `RD$ ${shipping.toFixed(2)}`}
             </span>
           </div>
           <div className='flex justify-between text-sm'>
             <span className='text-neutral-600'>IVA (21%)</span>
             <span className='font-medium text-neutral-800'>
-              {tax.toFixed(2)}€
+              RD$ {tax.toFixed(2)}
             </span>
           </div>
           {shipping === 0 && (
@@ -104,7 +104,7 @@ const OrderSummary = ({
           <div className='flex justify-between text-base pt-3 border-t border-neutral-200 mt-2'>
             <span className='font-medium text-neutral-800'>Total</span>
             <span className='font-bold text-primary-800'>
-              {total.toFixed(2)}€
+              RD$ {total.toFixed(2)}
             </span>
           </div>
         </div>

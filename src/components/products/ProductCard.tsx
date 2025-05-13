@@ -45,7 +45,9 @@ const ProductCard = ({ product, variants }) => {
         </Link>
         <p className='text-sm opacity-70 line-clamp-2'>{product.description}</p>
         <div className='flex items-center justify-between mt-2'>
-          <span className='text-xl font-bold'>{product.price.toFixed(2)}€</span>
+          <span className='text-xl font-bold'>
+            RD$ {product.price.toFixed(2)}
+          </span>
           {/* Opcional: Iconos de acción sutiles */}
           <div className='flex space-x-2'>
             <motion.button

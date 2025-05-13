@@ -284,11 +284,11 @@ const SideCart = ({
                             </div>
                             <div className='text-right'>
                               <p className='text-sm font-medium text-neutral-800'>
-                                {(item.price * item.quantity).toFixed(2)}€
+                                RD$ {(item.price * item.quantity).toFixed(2)}
                               </p>
                               {item.quantity > 1 && (
                                 <p className='text-xs text-neutral-500'>
-                                  {item.price.toFixed(2)}€ unidad
+                                  RD$ {item.price.toFixed(2)} unidad
                                 </p>
                               )}
                             </div>
@@ -309,13 +309,13 @@ const SideCart = ({
                   <div className='flex justify-between text-sm'>
                     <span className='text-neutral-600'>Subtotal</span>
                     <span className='font-medium text-neutral-800'>
-                      {subtotal.toFixed(2)}€
+                      RD$ {subtotal.toFixed(2)}
                     </span>
                   </div>
                   <div className='flex justify-between text-sm'>
                     <span className='text-neutral-600'>Envío</span>
                     <span className='font-medium text-neutral-800'>
-                      {shipping === 0 ? 'Gratis' : `${shipping.toFixed(2)}€`}
+                      {shipping === 0 ? 'Gratis' : `RD$ ${shipping.toFixed(2)}`}
                     </span>
                   </div>
                   {shipping === 0 && (
@@ -339,7 +339,7 @@ const SideCart = ({
                   <div className='flex justify-between text-base pt-2 border-t border-neutral-200'>
                     <span className='font-medium text-neutral-800'>Total</span>
                     <span className='font-bold text-primary-800'>
-                      {total.toFixed(2)}€
+                      RD$ {total.toFixed(2)}
                     </span>
                   </div>
                 </div>
@@ -348,7 +348,7 @@ const SideCart = ({
                 <div className='space-y-2'>
                   <button
                     onClick={goToCheckout}
-                    className='w-full py-3 px-4 bg-primary-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg flex items-center justify-center'
+                    className='w-full py-3 px-4 bg-green-600 hover:bg-primary-700 text-white font-medium rounded-lg transition-colors shadow-md hover:shadow-lg flex items-center justify-center'
                   >
                     Finalizar compra
                     <svg
@@ -375,7 +375,7 @@ const SideCart = ({
 
                 {/* Envío gratuito incentivo */}
                 {subtotal < 50 && (
-                  <div className='mt-4 bg-primary-50 p-3 rounded-lg'>
+                  <div className='mt-4 bg-yellow-50 p-3 rounded-lg'>
                     <div className='flex items-start'>
                       <svg
                         className='w-5 h-5 text-primary-600 mr-2 flex-shrink-0 mt-0.5'
@@ -393,7 +393,7 @@ const SideCart = ({
                       <p className='text-xs text-primary-700'>
                         ¡Añade{' '}
                         <span className='font-bold'>
-                          {(50 - subtotal).toFixed(2)}€
+                          RD$ {(50 - subtotal).toFixed(2)}
                         </span>{' '}
                         más a tu compra para obtener envío gratuito!
                       </p>

@@ -396,7 +396,7 @@ export default function Hero() {
                   <div className='py-3 px-4 rounded-full bg-secondary-500/90 text-white shadow-lg flex items-center'>
                     <div className='text-center'>
                       <span className='block text-xs mb-0.5'>Desde</span>
-                      <span className='block text-lg font-bold'>9.95€</span>
+                      <span className='block text-lg font-bold'>9.95</span>
                     </div>
                   </div>
                 </motion.div>
