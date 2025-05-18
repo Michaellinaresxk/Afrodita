@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-
+// @ts-ignore
 const AddressForm = ({ shippingInfo, handleChange, onSubmit }) => {
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     onSubmit();
   };

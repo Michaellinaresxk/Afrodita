@@ -171,8 +171,7 @@ export default function Benefits() {
             />
             <div className='absolute inset-0 bg-gradient-to-l from-transparent to-primary-50/95'></div>
           </div>
-
-          <div className='relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 p-8 md:p-12'>
+          <div className='relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-12'>
             <div>
               <div className='inline-flex items-center px-3 py-1 rounded-full bg-white shadow-sm border border-primary-100 mb-4'>
                 <span className='text-xs font-medium text-primary-700'>
@@ -180,11 +179,11 @@ export default function Benefits() {
                 </span>
               </div>
 
-              <h3 className='text-2xl font-serif font-bold text-primary-900 mb-4'>
+              <h3 className='text-xl md:text-2xl font-serif font-bold text-primary-900 mb-4'>
                 Solo utilizamos ingredientes de la más alta calidad
               </h3>
 
-              <p className='text-neutral-600 mb-6'>
+              <p className='text-neutral-600 mb-6 text-base md:text-lg'>
                 Cada jabón está elaborado cuidadosamente en pequeños lotes,
                 utilizando el método tradicional de saponificación en frío para
                 preservar todas las propiedades beneficiosas de los aceites
@@ -202,10 +201,12 @@ export default function Benefits() {
                     key={`quality-item-${index}`}
                     className='flex items-start'
                   >
-                    <div className='flex-shrink-0 w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center mt-0.5 mr-3'>
+                    <div className='flex-shrink-0 w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center mt-1 mr-3'>
                       <Check className='w-3 h-3' />
                     </div>
-                    <span className='text-neutral-700'>{item}</span>
+                    <span className='text-neutral-700 text-base md:text-lg'>
+                      {item}
+                    </span>
                   </li>
                 ))}
               </ul>
@@ -213,7 +214,7 @@ export default function Benefits() {
               <div className='mt-8'>
                 <Link
                   href='/about'
-                  className='inline-flex items-center text-primary-700 font-medium hover:text-primary-800 transition-colors'
+                  className='inline-flex items-center text-primary-700 font-medium text-base md:text-lg hover:text-primary-800 transition-colors'
                 >
                   <span>Conoce nuestro proceso</span>
                   <ArrowRight className='ml-2 w-4 h-4' />

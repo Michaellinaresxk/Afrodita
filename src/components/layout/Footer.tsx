@@ -1,21 +1,19 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 
 export default function Footer() {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  // const [email, setEmail] = useState('');
+  // const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // Aquí iría la lógica para enviar el email a tu servicio de newsletters
-    setIsSubmitted(true);
-    setTimeout(() => setIsSubmitted(false), 3000); // Reset después de 3 segundos
-    setEmail('');
-  };
+  // const handleSubmit = (e: { preventDefault: () => void }) => {
+  //   e.preventDefault();
+  //   // Aquí iría la lógica para enviar el email a tu servicio de newsletters
+  //   setIsSubmitted(true);
+  //   setTimeout(() => setIsSubmitted(false), 3000); // Reset después de 3 segundos
+  //   setEmail('');
+  // };
 
   // Animación para los elementos que aparecen
   const itemVariant = {

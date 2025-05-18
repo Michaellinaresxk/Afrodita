@@ -4,20 +4,27 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
+type PaymentFormProps = {
+  paymentMethod: string;
+  setPaymentMethod: (method: string) => void;
+  onSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  onBack: () => void;
+  isProcessing: boolean;
+};
 const PaymentForm = ({
   paymentMethod,
   setPaymentMethod,
   onSubmit,
   onBack,
   isProcessing,
-}) => {
+}: PaymentFormProps) => {
   const [cardNumber, setCardNumber] = useState('');
   const [cardName, setCardName] = useState('');
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
 
   // Formatear número de tarjeta con espacios cada 4 dígitos
-  const handleCardNumberChange = (e) => {
+  const handleCardNumberChange = (e: { target: { value: string } }) => {
     const value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
     if (value.length <= 16) {
       const formattedValue = value.replace(/(.{4})/g, '$1 ').trim();
@@ -26,7 +33,7 @@ const PaymentForm = ({
   };
 
   // Formatear fecha de expiración (MM/YY)
-  const handleExpiryChange = (e) => {
+  const handleExpiryChange = (e: { target: { value: string } }) => {
     let value = e.target.value.replace(/[^0-9]/g, '');
     if (value.length <= 4) {
       if (value.length > 2) {
@@ -302,7 +309,7 @@ const PaymentForm = ({
       {paymentMethod === 'paypal' && (
         <div className='bg-neutral-50 p-6 rounded-lg mb-8'>
           <p className='text-neutral-600 text-sm mb-4'>
-            Al hacer clic en "Completar pedido", serás redirigido a PayPal para
+            Al hacer clic en Completar pedido, serás redirigido a PayPal para
             completar tu compra de forma segura.
           </p>
           <div className='flex items-center justify-center'>
@@ -320,8 +327,8 @@ const PaymentForm = ({
       {paymentMethod === 'bizum' && (
         <div className='bg-neutral-50 p-6 rounded-lg mb-8'>
           <p className='text-neutral-600 text-sm mb-4'>
-            Al hacer clic en "Completar pedido", recibirás una notificación en
-            tu móvil para autorizar el pago con Bizum.
+            Al hacer clic en Completar pedido, recibirás una notificación en tu
+            móvil para autorizar el pago con Bizum.
           </p>
           <div className='flex flex-col items-center justify-center'>
             <Image

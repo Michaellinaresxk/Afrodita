@@ -1,12 +1,20 @@
 import { motion } from 'framer-motion';
 
+type TimelineEventProps = {
+  year: string;
+  title: string;
+  description: string;
+  position?: 'left' | 'right';
+  isActive?: boolean;
+};
+
 export const TimelineEvent = ({
   year,
   title,
   description,
   position = 'left',
   isActive = false,
-}) => {
+}: TimelineEventProps) => {
   const isLeft = position === 'left';
 
   return (

@@ -3,19 +3,19 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link'; // Añadimos Link de Next.js
 import { Product } from '@/lib/graphql/types';
 
 interface ProductCardProps {
   product: Product;
-  variants?: any;
+  variants?: unknown;
 }
 
-const ProductCard = ({ product, variants }: ProductCardProps) => {
-  const [isHovered, setIsHovered] = useState(false);
+const ProductCard = ({ product }: ProductCardProps) => {
+  // const [isHovered, setIsHovered] = useState(false);
   const [imageError, setImageError] = useState(false);
-  const router = useRouter();
+  // const router = useRouter();
 
   // Función mejorada para extraer la URL de la imagen de manera segura
   const getImageUrl = () => {
@@ -45,24 +45,24 @@ const ProductCard = ({ product, variants }: ProductCardProps) => {
     (typeof product.id === 'string' || typeof product.id === 'number');
 
   // Función para manejar el clic en todo el producto
-  const handleProductClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (hasValidId) {
-      const productId = String(product.id);
-      console.log('Navegando a producto con ID:', productId);
+  // const handleProductClick = (e: React.MouseEvent) => {
+  //   e.preventDefault();
+  //   if (hasValidId) {
+  //     const productId = String(product.id);
+  //     console.log('Navegando a producto con ID:', productId);
 
-      // SOLUCIÓN: Usamos la ruta correcta con el ID real del producto
-      router.push(`/products/${productId}`);
-    }
-  };
+  //     // SOLUCIÓN: Usamos la ruta correcta con el ID real del producto
+  //     router.push(`/products/${productId}`);
+  //   }
+  // };
 
   // Otra opción es usar Link directamente
   return (
     <Link href={hasValidId ? `/products/${product.id}` : '#'} passHref>
       <motion.div
-        variants={variants}
-        onHoverStart={() => setIsHovered(true)}
-        onHoverEnd={() => setIsHovered(false)}
+        // variants={variants}
+        // onHoverStart={() => setIsHovered(true)}
+        // onHoverEnd={() => setIsHovered(false)}
         className='group relative bg-neutral-50 rounded-lg overflow-hidden shadow-sm transition-all duration-300 h-full flex flex-col cursor-pointer'
         data-product-id={product.id} // Agregar atributo de datos para depuración
       >

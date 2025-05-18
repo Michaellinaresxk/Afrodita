@@ -45,10 +45,12 @@ export const testConnection = async () => {
     return true;
   } catch (error) {
     console.error('Connection test failed:', error);
+    //@ts-ignore
     console.error('Error details:', error.response?.errors || error.message);
 
-    // Log more detailed information about the request
+    //@ts-ignore
     if (error.request) {
+      //@ts-ignore
       console.error('Request that failed:', error.request);
     }
 

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-
+// @ts-ignore
 const ValueCard = ({ icon, title, description, color }) => (
   <motion.div
     whileHover={{
