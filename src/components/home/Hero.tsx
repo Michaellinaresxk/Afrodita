@@ -109,10 +109,7 @@ export default function Hero() {
         <div className='absolute inset-0 bg-gradient-to-br from-primary-900/80 via-primary-800/70 to-primary-900/75 backdrop-blur-[2px]'></div>
 
         {/* Texturas adicionales */}
-        <div
-          className='absolute inset-0 mix-blend-overlay opacity-10'
-          style={{ backgroundImage: 'url("/img/texture.png")' }}
-        ></div>
+        <div className='absolute inset-0 mix-blend-overlay opacity-10'></div>
       </motion.div>
 
       <div className='container mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
@@ -326,7 +323,7 @@ export default function Hero() {
                   className='relative z-10'
                 >
                   <Image
-                    src='/img/soap-product.png'
+                    src='/img/jabon.jpg'
                     alt='Jabones naturales premium'
                     fill
                     style={{ objectFit: 'contain' }}

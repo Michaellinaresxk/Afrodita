@@ -1,37 +1,126 @@
+// app/products/page.tsx - versión corregida y completa
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import Image from 'next/image';
-import { categories, luxuryProducts, sortOptions } from '@/constants/products';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
+import { useCategories } from '@/hooks/useHygraphData';
+import { Product } from '@/lib/graphql/types';
+import { productsService } from '@/lib/hygraph/productsService';
 
 const ProductsPage = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [products, setProducts] = useState(luxuryProducts);
-  const [filteredProducts, setFilteredProducts] = useState(luxuryProducts);
-  const [activeCategory, setActiveCategory] = useState('todos');
+  const router = useRouter();
+
+  // Obtener parámetros de búsqueda de la URL
+  const searchParams = useSearchParams();
+  const categoryFromUrl = searchParams.get('category');
+
+  // Estado local para productos y filtrado
+  const [products, setProducts] = useState<Product[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+  const [productsLoading, setProductsLoading] = useState(true);
+  const [productsError, setProductsError] = useState<string | null>(null);
+
+  // Estado local para filtrado y ordenamiento
+  const [activeCategory, setActiveCategory] = useState(
+    categoryFromUrl || 'todos'
+  );
   const [sortBy, setSortBy] = useState('popular');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isSticky, setIsSticky] = useState(false);
+
+  // Obtenemos categorías usando nuestro hook personalizado
+  const {
+    categories,
+    loading: categoriesLoading,
+    error: categoriesError,
+  } = useCategories();
+
+  // Cargar productos directamente usando productsService
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        setProductsLoading(true);
+        setProductsError(null);
+
+        console.log(`Cargando productos con categoría: ${activeCategory}`);
+        let productData: Product[];
+
+        if (activeCategory === 'todos') {
+          productData = await productsService.getAllProducts();
+        } else {
+          productData = await productsService.getProductsByCategory(
+            activeCategory
+          );
+        }
+
+        console.log(`Cargados ${productData.length} productos`);
+        setProducts(productData);
+      } catch (err) {
+        console.error('Error al cargar productos:', err);
+        setProductsError('No se pudieron cargar los productos');
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, [activeCategory]);
+
+  // Combinamos los estados de carga y error
+  const loading = productsLoading || categoriesLoading;
+  const error = productsError || categoriesError;
 
   const headerRef = useRef(null);
   const productsSectionRef = useRef(null);
   const isInView = useInView(productsSectionRef, { once: true, amount: 0.1 });
 
+  // Efecto para inicializar la categoría desde la URL
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setActiveCategory(categoryFromUrl);
+      console.log(`Categoría establecida desde URL: ${categoryFromUrl}`);
+    }
+  }, [categoryFromUrl]);
+
+  // Efecto para actualizar la URL cuando cambia la categoría
+  useEffect(() => {
+    if (activeCategory === 'todos') {
+      router.push('/products');
+    } else {
+      router.push(`/products?category=${activeCategory}`);
+    }
+  }, [activeCategory, router]);
+
+  // Efecto para gestionar scroll y filtros sticky
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const header = headerRef.current as HTMLElement;
+        const headerOffset = header.offsetTop;
+        setIsSticky(window.scrollY > headerOffset);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
   // Efecto para filtrar y ordenar productos
   useEffect(() => {
-    let result = [...luxuryProducts];
+    if (!products || products.length === 0) return;
 
-    // Filtrar por categoría
-    if (activeCategory !== 'todos') {
-      result = result.filter(
-        (product) => product.category.toLowerCase() === activeCategory
-      );
-    }
+    console.log(
+      `Filtrando productos: búsqueda=${searchQuery}, orden=${sortBy}`
+    );
+
+    let result = [...products];
 
     // Filtrar por búsqueda
     if (searchQuery) {
@@ -40,9 +129,12 @@ const ProductsPage = () => {
         (product) =>
           product.name.toLowerCase().includes(query) ||
           product.description.toLowerCase().includes(query) ||
-          product.ingredients.some((ingredient) =>
-            ingredient.toLowerCase().includes(query)
-          )
+          (Array.isArray(product.ingredients) &&
+            product.ingredients.some(
+              (ingredient) =>
+                typeof ingredient === 'string' &&
+                ingredient.toLowerCase().includes(query)
+            ))
       );
     }
 
@@ -63,10 +155,10 @@ const ProductsPage = () => {
         break;
     }
 
+    console.log(`Productos filtrados: ${result.length} encontrados`);
     setFilteredProducts(result);
-  }, [activeCategory, sortBy, searchQuery]);
+  }, [sortBy, searchQuery, products]);
 
-  // Variantes de animación para Framer Motion
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -85,6 +177,11 @@ const ProductsPage = () => {
       y: 0,
       transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] },
     },
+  };
+
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    console.log(`Cambiando a categoría: ${categoryId}`);
   };
 
   return (
@@ -159,60 +256,71 @@ const ProductsPage = () => {
               </button>
 
               <div className='hidden md:flex items-center space-x-1 overflow-x-auto pb-2 scrollbar-hide'>
-                {categories.map((category) => (
-                  <button
-                    key={category.id}
-                    onClick={() => setActiveCategory(category.id)}
-                    className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
-                      activeCategory === category.id
-                        ? 'bg-primary-600 text-white font-medium'
-                        : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                    } transition-colors`}
-                  >
-                    {category.name}
-                  </button>
-                ))}
+                <button
+                  onClick={() => handleCategoryClick('todos')}
+                  className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
+                    activeCategory === 'todos'
+                      ? 'bg-primary-600 text-white font-medium'
+                      : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                  } transition-colors`}
+                >
+                  Todos los productos
+                </button>
+
+                {!categoriesLoading &&
+                  categories.map((category) => (
+                    <button
+                      key={`cat-btn-${category.id}`}
+                      onClick={() => handleCategoryClick(category.id)}
+                      className={`px-4 py-2 rounded-full text-sm whitespace-nowrap ${
+                        activeCategory === category.id
+                          ? 'bg-primary-600 text-white font-medium'
+                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                      } transition-colors`}
+                    >
+                      {category.name}
+                    </button>
+                  ))}
               </div>
             </div>
 
-            <div className='flex items-center gap-4'>
-              <div className='relative flex-grow max-w-xs'>
-                <div className='absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none'>
-                  <svg
-                    className='h-5 w-5 text-neutral-400'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                    ></path>
-                  </svg>
-                </div>
+            {/* Input de búsqueda */}
+            <div className='flex items-center'>
+              <div className='relative flex-1'>
                 <input
                   type='text'
-                  placeholder='Buscar productos...'
-                  className='pl-10 pr-4 py-2 w-full border border-neutral-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400'
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder='Buscar productos...'
+                  className='w-full pl-10 pr-4 py-2 border border-neutral-300 rounded-full text-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent'
                 />
+                <svg
+                  className='w-5 h-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-neutral-400'
+                  fill='none'
+                  stroke='currentColor'
+                  viewBox='0 0 24 24'
+                  xmlns='http://www.w3.org/2000/svg'
+                >
+                  <path
+                    strokeLinecap='round'
+                    strokeLinejoin='round'
+                    strokeWidth='2'
+                    d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
+                  ></path>
+                </svg>
               </div>
 
-              <div className='flex-shrink-0'>
+              {/* Selector de orden */}
+              <div className='ml-4'>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className='bg-white border border-neutral-300 text-neutral-700 py-2 pl-3 pr-10 rounded-full focus:outline-none focus:ring-2 focus:ring-primary-400 text-sm'
+                  className='pl-4 pr-8 py-2 border border-neutral-300 rounded-full text-neutral-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white appearance-none cursor-pointer'
                 >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
+                  <option value='popular'>Más populares</option>
+                  <option value='newest'>Más nuevos</option>
+                  <option value='price-low'>Precio: menor a mayor</option>
+                  <option value='price-high'>Precio: mayor a menor</option>
                 </select>
               </div>
             </div>
@@ -229,19 +337,31 @@ const ProductsPage = () => {
                 className='md:hidden overflow-hidden'
               >
                 <div className='pt-4 pb-2 flex flex-wrap gap-2'>
-                  {categories.map((category) => (
-                    <button
-                      key={category.id}
-                      onClick={() => setActiveCategory(category.id)}
-                      className={`px-4 py-2 rounded-full text-sm ${
-                        activeCategory === category.id
-                          ? 'bg-primary-600 text-white font-medium'
-                          : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                      } transition-colors`}
-                    >
-                      {category.name}
-                    </button>
-                  ))}
+                  <button
+                    onClick={() => handleCategoryClick('todos')}
+                    className={`px-4 py-2 rounded-full text-sm ${
+                      activeCategory === 'todos'
+                        ? 'bg-primary-600 text-white font-medium'
+                        : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                    } transition-colors`}
+                  >
+                    Todos
+                  </button>
+
+                  {!categoriesLoading &&
+                    categories.map((category) => (
+                      <button
+                        key={`mobile-cat-${category.id}`}
+                        onClick={() => handleCategoryClick(category.id)}
+                        className={`px-4 py-2 rounded-full text-sm ${
+                          activeCategory === category.id
+                            ? 'bg-primary-600 text-white font-medium'
+                            : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
+                        } transition-colors`}
+                      >
+                        {category.name}
+                      </button>
+                    ))}
                 </div>
               </motion.div>
             )}
@@ -261,21 +381,24 @@ const ProductsPage = () => {
               <h2 className='text-2xl font-serif font-bold text-primary-900'>
                 Nuestros Jabones Artesanales
               </h2>
-              <p className='text-neutral-600'>
-                Mostrando {filteredProducts.length} de {luxuryProducts.length}{' '}
-                productos
-              </p>
+              {!loading && !error && (
+                <p className='text-neutral-600'>
+                  Mostrando {filteredProducts.length} de {products?.length || 0}{' '}
+                  productos
+                </p>
+              )}
             </div>
 
             {/* Tags de filtros activos */}
-            {activeCategory !== 'todos' && (
+            {!loading && !error && activeCategory !== 'todos' && (
               <div className='flex items-center mt-2 md:mt-0'>
                 <span className='text-sm text-neutral-500 mr-2'>Filtros:</span>
                 <div className='flex flex-wrap gap-2'>
                   <div className='bg-primary-100 text-primary-800 text-sm px-3 py-1 rounded-full flex items-center'>
-                    {categories.find((c) => c.id === activeCategory)?.name}
+                    {categories.find((c) => c.id === activeCategory)?.name ||
+                      activeCategory}
                     <button
-                      onClick={() => setActiveCategory('todos')}
+                      onClick={() => handleCategoryClick('todos')}
                       className='ml-1 text-primary-600 hover:text-primary-800'
                     >
                       <svg
@@ -299,25 +422,15 @@ const ProductsPage = () => {
             )}
           </div>
 
-          {/* Grid de productos */}
-          {filteredProducts.length > 0 ? (
-            <motion.div
-              variants={containerVariants}
-              initial='hidden'
-              animate={isInView ? 'visible' : 'hidden'}
-              className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8'
-            >
-              {filteredProducts.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  variants={cardVariants}
-                />
-              ))}
-            </motion.div>
-          ) : (
+          {/* Estado de carga */}
+          {loading ? (
+            <div className='flex flex-col justify-center items-center py-20'>
+              <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 mb-4'></div>
+              <p className='text-neutral-600'>Cargando productos...</p>
+            </div>
+          ) : error ? (
             <div className='bg-white rounded-xl shadow-md p-12 text-center'>
-              <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 text-neutral-400 mb-6'>
+              <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-6'>
                 <svg
                   className='w-8 h-8'
                   fill='none'
@@ -329,22 +442,17 @@ const ProductsPage = () => {
                     strokeLinecap='round'
                     strokeLinejoin='round'
                     strokeWidth='2'
-                    d='M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                    d='M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z'
                   ></path>
                 </svg>
               </div>
               <h3 className='text-xl font-medium text-neutral-800 mb-2'>
-                No se encontraron productos
+                Error al cargar productos
               </h3>
-              <p className='text-neutral-600 mb-6'>
-                No hay productos que coincidan con tus criterios de búsqueda.
-              </p>
+              <p className='text-neutral-600 mb-6'>{error}</p>
               <button
-                onClick={() => {
-                  setActiveCategory('todos');
-                  setSearchQuery('');
-                }}
-                className='inline-flex items-center text-primary-600 hover:text-primary-800 font-medium'
+                onClick={() => window.location.reload()}
+                className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
               >
                 <svg
                   className='w-5 h-5 mr-2'
@@ -360,80 +468,80 @@ const ProductsPage = () => {
                     d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
                   ></path>
                 </svg>
-                Restablecer filtros
+                Intentar de nuevo
               </button>
             </div>
+          ) : (
+            <>
+              {/* Grid de productos */}
+              {filteredProducts.length > 0 ? (
+                <motion.div
+                  variants={containerVariants}
+                  initial='hidden'
+                  animate={isInView ? 'visible' : 'hidden'}
+                  className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8'
+                >
+                  {filteredProducts.map((product) => (
+                    <motion.div
+                      key={`product-grid-${product.id}`}
+                      variants={cardVariants}
+                    >
+                      <ProductCard product={product} variants={undefined} />
+                    </motion.div>
+                  ))}
+                </motion.div>
+              ) : (
+                <div className='bg-white rounded-xl shadow-md p-12 text-center'>
+                  <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 text-neutral-400 mb-6'>
+                    <svg
+                      className='w-8 h-8'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth='2'
+                        d='M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
+                      ></path>
+                    </svg>
+                  </div>
+                  <h3 className='text-xl font-medium text-neutral-800 mb-2'>
+                    No se encontraron productos
+                  </h3>
+                  <p className='text-neutral-600 mb-6'>
+                    No hay productos que coincidan con tus criterios de
+                    búsqueda.
+                  </p>
+                  <button
+                    onClick={() => {
+                      handleCategoryClick('todos');
+                      setSearchQuery('');
+                    }}
+                    className='inline-flex items-center text-primary-600 hover:text-primary-800 font-medium'
+                  >
+                    <svg
+                      className='w-5 h-5 mr-2'
+                      fill='none'
+                      stroke='currentColor'
+                      viewBox='0 0 24 24'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                        strokeWidth='2'
+                        d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
+                      ></path>
+                    </svg>
+                    Restablecer filtros
+                  </button>
+                </div>
+              )}
+            </>
           )}
-
-          {/* Paginación (simulada) */}
-          {/* {filteredProducts.length > 0 && (
-            <div className='mt-12 flex justify-center'>
-              <nav
-                className='inline-flex rounded-md shadow-sm -space-x-px'
-                aria-label='Pagination'
-              >
-                <a
-                  href='#'
-                  className='relative inline-flex items-center px-3 py-2 rounded-l-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50'
-                >
-                  <span className='sr-only'>Anterior</span>
-                  <svg
-                    className='h-5 w-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M15 19l-7-7 7-7'
-                    ></path>
-                  </svg>
-                </a>
-                <a
-                  href='#'
-                  aria-current='page'
-                  className='relative inline-flex items-center px-4 py-2 border border-primary-500 bg-primary-50 text-sm font-medium text-primary-600'
-                >
-                  1
-                </a>
-                <a
-                  href='#'
-                  className='relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50'
-                >
-                  2
-                </a>
-                <a
-                  href='#'
-                  className='relative inline-flex items-center px-4 py-2 border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50'
-                >
-                  3
-                </a>
-                <a
-                  href='#'
-                  className='relative inline-flex items-center px-3 py-2 rounded-r-md border border-neutral-300 bg-white text-sm font-medium text-neutral-500 hover:bg-neutral-50'
-                >
-                  <span className='sr-only'>Siguiente</span>
-                  <svg
-                    className='h-5 w-5'
-                    fill='none'
-                    stroke='currentColor'
-                    viewBox='0 0 24 24'
-                    xmlns='http://www.w3.org/2000/svg'
-                  >
-                    <path
-                      strokeLinecap='round'
-                      strokeLinejoin='round'
-                      strokeWidth='2'
-                      d='M9 5l7 7-7 7'
-                    ></path>
-                  </svg>
-                </a>
-              </nav>
-            </div>
-          )} */}
         </div>
       </div>
     </>

@@ -1,11 +1,17 @@
+// components/products/RelatedProducts.tsx - Versión corregida
 'use client';
 
 import { useRef } from 'react';
 import { motion, useInView } from 'framer-motion';
 import Link from 'next/link';
 import ProductCard from './ProductCard';
-// @ts-expect-error Ignorar tipado implícito por compatibilidad
-export default function RelatedProducts({ products }) {
+import { Product } from '@/lib/graphql/types';
+
+interface RelatedProductsProps {
+  products: Product[];
+}
+
+export default function RelatedProducts({ products }: RelatedProductsProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, amount: 0.2 });
 
@@ -56,8 +62,11 @@ export default function RelatedProducts({ products }) {
           animate={isInView ? 'visible' : 'hidden'}
           className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6'
         >
-          {products.map((product) => (
-            <motion.div key={product.id} variants={itemVariants}>
+          {products.map((product, index) => (
+            <motion.div
+              key={`related-product-${product.id || index}-${Date.now()}`}
+              variants={itemVariants}
+            >
               <ProductCard product={product} variants={undefined} />
             </motion.div>
           ))}
