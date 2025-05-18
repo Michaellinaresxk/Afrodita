@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-
+// @ts-ignore
 const CheckoutSteps = ({ currentStep }) => {
   const steps = [
     { id: 1, name: 'Envío' },

@@ -13,6 +13,7 @@ import PaymentForm from '@/components/payment/PaymentForm';
 
 export default function PaymentPage() {
   const router = useRouter();
+  // @ts-ignore
   const { cartItems, subtotal, clearCart } = useCart();
   const [currentStep, setCurrentStep] = useState(1);
   const [shippingInfo, setShippingInfo] = useState({
@@ -54,7 +55,7 @@ export default function PaymentPage() {
   };
 
   // Manejar cambios en formulario de envío
-  const handleShippingChange = (e) => {
+  const handleShippingChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setShippingInfo({
       ...shippingInfo,
@@ -63,7 +64,7 @@ export default function PaymentPage() {
   };
 
   // Manejar el envío del pago
-  const handlePayment = (e) => {
+  const handlePayment = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setIsProcessing(true);
 

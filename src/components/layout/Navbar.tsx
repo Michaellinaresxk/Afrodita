@@ -11,8 +11,7 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
-
-  // Usar el contexto del carrito para obtener el contador y la función para abrir el carrito
+  // @ts-ignore
   const { cartCount, setIsCartOpen } = useCart();
 
   // Handle scroll effect

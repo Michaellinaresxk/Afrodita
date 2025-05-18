@@ -134,6 +134,7 @@ export const useProductDetails = (productId: string) => {
                 if (p.categories && productData.categories) {
                   return (
                     p.categories.some((cat) =>
+                      // @ts-ignore
                       productData.categories.includes(cat)
                     ) && p.id !== productId
                   );

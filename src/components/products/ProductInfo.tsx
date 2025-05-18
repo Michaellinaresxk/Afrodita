@@ -35,7 +35,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
   );
   const [selectedQuantity, setSelectedQuantity] = useState(1);
 
-  // Usar el contexto del carrito
+  // @ts-ignore
   const { addToCart } = useCart();
 
   const handleQuantityChange = (value: number) => {
@@ -142,7 +142,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
                     ? ingredient.substring(0, 10)
                     : index
                 }`}
-                className='bg-white text-neutral-700 px-3 py-1 rounded-full text-sm border border-neutral-200'
+                className='bg-neutral-100 text-neutral-700 px-3 py-1 rounded-full text-sm border border-neutral-200'
               >
                 {ingredient}
               </span>

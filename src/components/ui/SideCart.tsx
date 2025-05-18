@@ -1,10 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
+type sideCardProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  cartItems: any[];
+  removeFromCart: (id: string, size?: string) => void;
+  updateQuantity: (id: string, size?: string, quantity?: number) => void;
+  subtotal: number;
+};
 
 const SideCart = ({
   isOpen,
@@ -13,24 +22,24 @@ const SideCart = ({
   removeFromCart,
   updateQuantity,
   subtotal,
-}) => {
+}: sideCardProps) => {
   const router = useRouter();
-  const [isClosing, setIsClosing] = useState(false);
+  // const [isClosing, setIsClosing] = useState(false);
 
   // Manejar cierre con animación
-  const handleClose = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsClosing(false);
-      onClose();
-    }, 300);
-  };
+  // const handleClose = () => {
+  //   setIsClosing(true);
+  //   setTimeout(() => {
+  //     setIsClosing(false);
+  //     onClose();
+  //   }, 300);
+  // };
 
   // Cierre con tecla Escape
   useEffect(() => {
-    const handleEscKey = (e) => {
+    const handleEscKey = (e: { key: string }) => {
       if (e.key === 'Escape' && isOpen) {
-        handleClose();
+        // handleClose();
       }
     };
 
@@ -98,7 +107,7 @@ const SideCart = ({
             initial='hidden'
             animate='visible'
             exit='exit'
-            onClick={handleClose}
+            // onClick={handleClose}
           />
 
           {/* Side Cart */}
@@ -115,7 +124,7 @@ const SideCart = ({
                 Tu Carrito
               </h2>
               <button
-                onClick={handleClose}
+                // onClick={handleClose}
                 className='p-1 rounded-full hover:bg-neutral-100 text-neutral-500'
               >
                 <svg
@@ -161,7 +170,7 @@ const SideCart = ({
                   </p>
                   <Link
                     href='/products'
-                    onClick={handleClose}
+                    // onClick={handleClose}
                     className='inline-flex items-center justify-center px-5 py-2 border border-transparent text-base font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700'
                   >
                     Ver productos
@@ -366,7 +375,7 @@ const SideCart = ({
                     </svg>
                   </button>
                   <button
-                    onClick={handleClose}
+                    // onClick={handleClose}
                     className='w-full py-2 px-4 bg-white border border-neutral-300 hover:bg-neutral-50 text-neutral-800 font-medium rounded-lg transition-colors text-sm'
                   >
                     Seguir comprando

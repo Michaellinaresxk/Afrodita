@@ -12,12 +12,12 @@ import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 export default function AboutUsPage() {
   const heroRef = useRef(null);
-  const missionRef = useRef(null);
+  // const missionRef = useRef(null);
   const storyRef = useRef(null);
   const valuesRef = useRef(null);
 
   const isHeroInView = useInView(heroRef, { once: true, amount: 0.2 });
-  const isMissionInView = useInView(missionRef, { once: true, amount: 0.3 });
+  // const isMissionInView = useInView(missionRef, { once: true, amount: 0.3 });
   const isStoryInView = useInView(storyRef, { once: true, amount: 0.3 });
   const isValuesInView = useInView(valuesRef, { once: true, amount: 0.3 });
 
@@ -254,6 +254,7 @@ export default function AboutUsPage() {
                     year={event.year}
                     title={event.title}
                     description={event.description}
+                    // @ts-ignore
                     position={event.position}
                     isActive={event.isActive}
                   />

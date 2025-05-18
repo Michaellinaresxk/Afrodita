@@ -1,4 +1,3 @@
-// components/products/RelatedProducts.tsx - Versión corregida
 'use client';
 
 import { useRef } from 'react';

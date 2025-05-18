@@ -1,4 +1,3 @@
-// app/products/page.tsx - versión corregida y completa
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
@@ -33,7 +32,6 @@ const ProductsPage = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
 
-  // Obtenemos categorías usando nuestro hook personalizado
   const {
     categories,
     loading: categoriesLoading,
@@ -71,7 +69,6 @@ const ProductsPage = () => {
     loadProducts();
   }, [activeCategory]);
 
-  // Combinamos los estados de carga y error
   const loading = productsLoading || categoriesLoading;
   const error = productsError || categoriesError;
 

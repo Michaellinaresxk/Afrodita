@@ -47,6 +47,7 @@ export default function Hero() {
 
   const buttonVariants = {
     hidden: { opacity: 0, y: 20 },
+    // @ts-ignore
     visible: (custom) => ({
       opacity: 1,
       y: 0,

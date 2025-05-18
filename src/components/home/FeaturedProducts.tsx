@@ -1,4 +1,3 @@
-// components/home/FeaturedProducts.tsx - Versión corregida
 'use client';
 
 import { useRef } from 'react';
@@ -120,18 +119,27 @@ export default function FeaturedProducts() {
         {/* Título y descripción */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
-          animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: -20 }}
-          transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          className='text-center mb-20'
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+          className='relative py-16 px-4'
         >
-          <h2 className='font-serif text-3xl md:text-4xl font-bold text-primary-800 mb-4'>
-            Nuestros Productos Destacados
-          </h2>
-          <p className='text-neutral-600 max-w-2xl mx-auto'>
-            Descubre nuestra selección de jabones artesanales más populares,
-            elaborados con ingredientes naturales para el cuidado completo de tu
-            piel.
-          </p>
+          {/* Línea decorativa superior */}
+          <div className='absolute top-0 left-1/2 -translate-x-1/2 w-24 h-px bg-gradient-to-r from-transparent via-green-400 to-transparent'></div>
+
+          <div className='text-center max-w-4xl mx-auto'>
+            <h2 className='font-serif text-4xl md:text-5xl lg:text-6xl font-light text-primary-900 mb-6 tracking-wide'>
+              Nuestros Productos
+              <span className='block mt-2 font-normal'>Destacados</span>
+            </h2>
+
+            <p className='text-neutral-600 text-lg md:text-xl font-light leading-relaxed max-w-2xl mx-auto px-4'>
+              Descubre nuestra selecta colección de jabones artesanales,
+              <span className='block mt-1'>
+                elaborados con los más finos ingredientes naturales para
+                sublimar el cuidado de tu piel.
+              </span>
+            </p>
+          </div>
         </motion.div>
 
         {/* Grid de productos */}
