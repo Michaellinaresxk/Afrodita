@@ -27,10 +27,7 @@ export default function Footer() {
     <footer className='bg-gradient-to-br from-primary-900 to-primary-800 text-white pt-16 pb-8 relative overflow-hidden footer-bg'>
       {/* Elementos decorativos de fondo */}
       <div className='absolute inset-0 overflow-hidden'>
-        <div
-          className='absolute top-0 left-0 w-full h-full opacity-10'
-          style={{ backgroundImage: 'url("/img/pattern.png")' }}
-        ></div>
+        <div className='absolute top-0 left-0 w-full h-full opacity-10'></div>
         <div className='absolute -top-20 -left-20 w-80 h-80 rounded-full bg-primary-700/30 blur-3xl'></div>
         <div className='absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-green-600/20 blur-3xl'></div>
       </div>

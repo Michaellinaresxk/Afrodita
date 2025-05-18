@@ -1,19 +1,22 @@
-import { Inter, Playfair_Display } from 'next/font/google';
+import { Montserrat, Cormorant_Garamond } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import CartProvider from '@/context/CartContext';
 
-const inter = Inter({
+const montserrat = Montserrat({
   subsets: ['latin'],
-  variable: '--font-inter',
+  variable: '--font-montserrat',
   display: 'swap',
+  weight: ['300', '400', '500', '600', '700'],
 });
 
-const playfair = Playfair_Display({
+// Cormorant Garamond - Una fuente serif elegante y sofisticada para títulos
+const cormorant = Cormorant_Garamond({
   subsets: ['latin'],
-  variable: '--font-playfair',
+  variable: '--font-cormorant',
   display: 'swap',
+  weight: ['400', '500', '600', '700'],
 });
 
 export const metadata = {
@@ -25,8 +28,8 @@ export const metadata = {
 // @ts-expect-error Ignorar tipado implícito por compatibilidad
 export default function RootLayout({ children }) {
   return (
-    <html lang='es' className={`${inter.variable} ${playfair.variable}`}>
-      <body className='min-h-screen flex flex-col bg-primary-50'>
+    <html lang='es' className={`${montserrat.variable} ${cormorant.variable}`}>
+      <body className='min-h-screen flex flex-col bg-primary-50 font-sans'>
         <CartProvider>
           <Navbar />
           <main className='flex-grow'>{children}</main>

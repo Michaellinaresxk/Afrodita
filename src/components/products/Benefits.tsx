@@ -42,6 +42,16 @@ export default function Benefits() {
     },
   };
 
+  // Crear un array de 10 elementos para las burbujas decorativas
+  const bubbles = Array.from({ length: 10 }).map((_, index) => ({
+    id: `bubble-${index}`,
+    left: `${Math.random() * 100}%`,
+    width: `${Math.random() * 40 + 10}px`,
+    height: `${Math.random() * 40 + 10}px`,
+    delay: Math.random() * 5,
+    duration: Math.random() * 5 + 5,
+  }));
+
   return (
     <section ref={ref} className='py-24 relative overflow-hidden'>
       {/* Modern glass morphism background elements */}
@@ -188,7 +198,10 @@ export default function Benefits() {
                   'Arcillas minerales purificantes',
                   'Extractos botánicos puros',
                 ].map((item, index) => (
-                  <li key={index} className='flex items-start'>
+                  <li
+                    key={`quality-item-${index}`}
+                    className='flex items-start'
+                  >
                     <div className='flex-shrink-0 w-5 h-5 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center mt-0.5 mr-3'>
                       <Check className='w-3 h-3' />
                     </div>
@@ -219,7 +232,7 @@ export default function Benefits() {
         >
           {stats.map((stat, index) => (
             <motion.div
-              key={index}
+              key={`stat-item-${index}`}
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.5, delay: 0.1 * index + 0.6 }}
@@ -369,16 +382,16 @@ export default function Benefits() {
         </div>
       </div>
 
-      {/* Decorative Bubbles */}
+      {/* Decorative Bubbles - CORREGIDO: cada burbuja tiene un key único y estable */}
       <div className='absolute bottom-0 left-0 right-0 h-40 overflow-hidden opacity-70 pointer-events-none'>
-        {[...Array(10)].map((_, i) => (
+        {bubbles.map((bubble) => (
           <motion.div
-            key={i}
+            key={bubble.id}
             className='absolute bottom-0 rounded-full bg-gradient-to-r from-white/60 to-white/30 backdrop-blur-sm'
             style={{
-              left: `${Math.random() * 100}%`,
-              width: `${Math.random() * 40 + 10}px`,
-              height: `${Math.random() * 40 + 10}px`,
+              left: bubble.left,
+              width: bubble.width,
+              height: bubble.height,
             }}
             animate={{
               y: [200, -100],
@@ -387,9 +400,9 @@ export default function Benefits() {
               scale: [0.8, 1.2, 1],
             }}
             transition={{
-              duration: Math.random() * 5 + 5,
+              duration: bubble.duration,
               repeat: Infinity,
-              delay: Math.random() * 5,
+              delay: bubble.delay,
               ease: 'easeInOut',
             }}
           />

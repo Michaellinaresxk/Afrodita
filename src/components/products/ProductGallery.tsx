@@ -1,26 +1,79 @@
+// components/products/ProductGallery.tsx - Versión mejorada
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
-// @ts-expect-error Ignorar tipado implícito por compatibilidad
-export default function ProductGallery({ product }) {
+import { Product } from '@/lib/graphql/types';
+
+interface ProductGalleryProps {
+  product: Product;
+}
+
+export default function ProductGallery({ product }: ProductGalleryProps) {
+  console.log('ProductGallery - Iniciando con producto:', product.id);
+
   const [selectedImage, setSelectedImage] = useState(0);
+  const [imageErrors, setImageErrors] = useState<boolean[]>([
+    false,
+    false,
+    false,
+    false,
+  ]);
+
+  // Verificar que product y product.image existan
+  useEffect(() => {
+    console.log(
+      'ProductGallery - URL de imagen:',
+      typeof product.image === 'string'
+        ? product.image
+        : product.image && 'url' in product.image
+        ? product.image.url
+        : 'Imagen no disponible'
+    );
+  }, [product]);
+
+  // Obtener la URL de la imagen principal de manera más segura
+  const getMainImageUrl = () => {
+    try {
+      if (typeof product.image === 'string') {
+        return product.image;
+      } else if (
+        product.image &&
+        typeof product.image === 'object' &&
+        'url' in product.image
+      ) {
+        return product.image.url;
+      }
+      return '/jabon.jpg'; // Imagen de placeholder genérica
+    } catch (error) {
+      console.error('Error al obtener URL de imagen principal:', error);
+      return '/jabon.jpg';
+    }
+  };
+
+  const mainImageUrl = getMainImageUrl();
+  console.log('ProductGallery - mainImageUrl:', mainImageUrl);
+
+  // En lugar de intentar generar variantes que podrían no existir,
+  // simplemente usamos la misma imagen principal para todos los thumbnails
+  const placeholderUrl = '/jabon.jpg';
+
+  // Simplemente usamos la misma imagen principal repetida para todos los thumbnails
   const productImages = [
-    product.image,
-    product.image.replace('.jpg', '-2.jpg'),
-    product.image.replace('.jpg', '-3.jpg'),
-    product.image.replace('.jpg', '-4.jpg'),
+    mainImageUrl,
+    mainImageUrl,
+    mainImageUrl,
+    mainImageUrl,
   ];
 
-  const imageContainerRef = useRef(null);
+  const imageContainerRef = useRef<HTMLDivElement>(null);
   const [zoomPosition, setZoomPosition] = useState({ x: 0, y: 0 });
   const [isZoomed, setIsZoomed] = useState(false);
-  // @ts-expect-error Ignorar tipado implícito por compatibilidad
-  const handleMouseMove = (e) => {
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (imageContainerRef.current && isZoomed) {
       const { left, top, width, height } =
-        // @ts-expect-error Ignorar tipado implícito por compatibilidad
         imageContainerRef.current.getBoundingClientRect();
       const x = ((e.clientX - left) / width) * 100;
       const y = ((e.clientY - top) / height) * 100;
@@ -28,12 +81,26 @@ export default function ProductGallery({ product }) {
     }
   };
 
+  const handleImageError = (index: number) => {
+    console.error(
+      `Error al cargar imagen ${index} para producto ${product.id}`
+    );
+    const newErrors = [...imageErrors];
+    newErrors[index] = true;
+    setImageErrors(newErrors);
+  };
+
+  // Get image URL with error handling
+  const getImageUrl = (index: number) => {
+    return imageErrors[index] ? placeholderUrl : productImages[index];
+  };
+
   return (
     <div className='space-y-6'>
       {/* Imagen principal con zoom */}
       <div
         ref={imageContainerRef}
-        className='relative overflow-hidden rounded-xl aspect-square shadow-lg cursor-zoom-in'
+        className='relative overflow-hidden rounded-xl aspect-square shadow-lg cursor-zoom-in bg-gray-100'
         onMouseMove={handleMouseMove}
         onMouseEnter={() => setIsZoomed(true)}
         onMouseLeave={() => setIsZoomed(false)}
@@ -41,24 +108,23 @@ export default function ProductGallery({ product }) {
         <motion.div
           className='absolute inset-0 transition-all duration-300'
           style={{
-            backgroundImage: `url(${productImages[selectedImage]})`,
+            backgroundImage: `url(${getImageUrl(selectedImage)})`,
             backgroundPosition: isZoomed
               ? `${zoomPosition.x}% ${zoomPosition.y}%`
               : 'center',
-            backgroundSize: isZoomed ? 'cover' : 'contain', // Cambiado a 'cover' para ocupar todo el espacio
+            backgroundSize: isZoomed ? 'cover' : 'contain',
             backgroundRepeat: 'no-repeat',
             backgroundColor: '#f8f9fa',
           }}
           animate={{ opacity: 1 }}
         />
-        {/* Eliminamos la capa Image con opacidad para evitar el salto */}
       </div>
 
       {/* Galería horizontal de miniaturas */}
       <div className='flex items-center gap-3 overflow-x-auto py-2 scrollbar-hide'>
-        {productImages.map((img, index) => (
+        {[0, 1, 2, 3].map((index) => (
           <motion.button
-            key={index}
+            key={`product-thumb-${product.id}-${index}`}
             onClick={() => setSelectedImage(index)}
             className={`relative h-20 w-20 rounded-md overflow-hidden border-3 flex-shrink-0 transition-all duration-200 ${
               selectedImage === index
@@ -68,12 +134,15 @@ export default function ProductGallery({ product }) {
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <Image
-              src={img}
-              alt={`${product.name} - Vista ${index + 1}`}
-              fill
-              style={{ objectFit: 'cover' }} // Aseguramos que la miniatura también cubra
-            />
+            <div className='relative w-full h-full bg-gray-200'>
+              <Image
+                src={getImageUrl(index)}
+                alt={`${product.name} - Vista ${index + 1}`}
+                fill
+                style={{ objectFit: 'cover' }}
+                onError={() => handleImageError(index)}
+              />
+            </div>
             {selectedImage === index && (
               <div className='absolute inset-0 bg-primary-500/20 rounded-md' />
             )}

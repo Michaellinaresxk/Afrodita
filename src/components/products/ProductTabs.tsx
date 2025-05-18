@@ -2,10 +2,35 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import ReviewStars from './ReviewStars';
-import { descriptions, productReviews } from '@/constants/products';
-// @ts-expect-error Ignorar tipado implícito por compatibilidad
-export default function ProductTabs({ product }) {
+import { descriptions } from '@/constants/products';
+import { Product } from '@/lib/graphql/types';
+
+interface ProductTabsProps {
+  product: Product;
+}
+
+export default function ProductTabs({ product }: ProductTabsProps) {
   const [activeTab, setActiveTab] = useState('description');
+
+  // Función mejorada para obtener descripción de ingredientes
+  const getIngredientDescription = (ingredient: string): string => {
+    // Asegurarse de que el ingrediente es un string
+    if (typeof ingredient !== 'string') return 'Ingrediente natural';
+
+    // Buscar en el objeto descriptions
+    const descriptionKey = Object.keys(descriptions).find(
+      (key) => key.toLowerCase() === ingredient.toLowerCase()
+    );
+
+    if (
+      descriptionKey &&
+      descriptions[descriptionKey as keyof typeof descriptions]
+    ) {
+      return descriptions[descriptionKey as keyof typeof descriptions];
+    }
+
+    return 'Ingrediente natural seleccionado por sus propiedades beneficiosas para la piel.';
+  };
 
   return (
     <section className='py-12 bg-neutral-50'>
@@ -42,20 +67,10 @@ export default function ProductTabs({ product }) {
           >
             Modo de uso
           </button>
-          <button
-            onClick={() => setActiveTab('reviews')}
-            className={`whitespace-nowrap py-4 px-6 font-medium border-b-2 transition-colors ${
-              activeTab === 'reviews'
-                ? 'border-primary-600 text-primary-700'
-                : 'border-transparent text-neutral-500 hover:text-primary-600'
-            }`}
-          >
-            Valoraciones ({productReviews.length})
-          </button>
         </div>
 
         {/* Contenido de las pestañas */}
-        <div className='bg-white rounded-xl shadow-soft p-6 md:p-8'>
+        <div className='bg-white rounded-xl shadow-sm p-6 md:p-8'>
           <AnimatePresence mode='wait'>
             {activeTab === 'description' && (
               <motion.div
@@ -84,11 +99,19 @@ export default function ProductTabs({ product }) {
                   </p>
                   <p>
                     Su fórmula rica en ingredientes hidratantes como{' '}
-                    {product.ingredients[0]} y {product.ingredients[1]} ayuda a
-                    mantener la piel nutrida e hidratada. El aroma natural de{' '}
-                    {product.ingredients[2]} proporciona una experiencia
+                    {product.ingredients && product.ingredients.length > 0
+                      ? product.ingredients[0]
+                      : 'aceites naturales'}{' '}
+                    y{' '}
+                    {product.ingredients && product.ingredients.length > 1
+                      ? product.ingredients[1]
+                      : 'extractos botánicos'}{' '}
+                    ayuda a mantener la piel nutrida e hidratada.
+                    {product.ingredients &&
+                      product.ingredients.length > 2 &&
+                      ` El aroma natural de ${product.ingredients[2]} proporciona una experiencia
                     sensorial única durante el baño, ayudando a calmar la mente
-                    y renovar el espíritu.
+                    y renovar el espíritu.`}
                   </p>
                   <p>
                     Este jabón es ideal para todo tipo de pieles, incluso las
@@ -142,14 +165,18 @@ export default function ProductTabs({ product }) {
                       Ingredientes principales
                     </h4>
                     <ul className='list-disc pl-5 space-y-2'>
-                      {product.ingredients.map(
-                        (ingredient: string[], index: number) => (
-                          <li key={index} className='text-neutral-600'>
+                      {Array.isArray(product.ingredients) &&
+                        product.ingredients.map((ingredient, index) => (
+                          <li
+                            key={`ingredient-${index}-${String(
+                              ingredient
+                            ).substring(0, 10)}`}
+                            className='text-neutral-600'
+                          >
                             <span className='font-medium'>{ingredient}</span>:{' '}
                             {getIngredientDescription(ingredient)}
                           </li>
-                        )
-                      )}
+                        ))}
                     </ul>
                   </div>
 
@@ -160,8 +187,10 @@ export default function ProductTabs({ product }) {
                     <p className='p-4 bg-neutral-50 rounded-lg text-sm'>
                       Sodium Olivate (Aceite de Oliva Saponificado), Sodium
                       Cocoate (Aceite de Coco Saponificado), Aqua,{' '}
-                      {product.ingredients.join(', ')}, Glycerin, Sodium
-                      Citrate, Citric Acid.
+                      {Array.isArray(product.ingredients)
+                        ? product.ingredients.join(', ')
+                        : 'Ingredientes naturales'}
+                      , Glycerin, Sodium Citrate, Citric Acid.
                     </p>
                     <p className='mt-3 text-sm italic'>
                       * Todos los ingredientes de origen natural. Sin
@@ -299,40 +328,6 @@ export default function ProductTabs({ product }) {
                         Basado en {product.reviews} valoraciones
                       </div>
                     </div>
-
-                    {/* <div className='flex-1 space-y-2'>
-                      {[5, 4, 3, 2, 1].map((star) => {
-                        // Calculamos un porcentaje ficticio para esta demo
-                        // const percentage = calculateStarPercentage(
-                        //   star,
-                        //   product.rating
-                        // );
-                        return (
-                          <div key={star} className='flex items-center'>
-                            <div className='text-sm text-neutral-600 w-8'>
-                              {star}
-                            </div>
-                            <svg
-                              className='w-4 h-4 text-amber-400 mx-1'
-                              fill='currentColor'
-                              viewBox='0 0 20 20'
-                              xmlns='http://www.w3.org/2000/svg'
-                            >
-                              <path d='M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z'></path>
-                            </svg>
-                            <div className='flex-1 h-2 mx-2 bg-neutral-200 rounded-full overflow-hidden'>
-                              <div
-                                className='h-full bg-amber-400 rounded-full'
-                                style={{ width: `${percentage}%` }}
-                              ></div>
-                            </div>
-                            <div className='text-sm text-neutral-500 w-10'>
-                              {percentage}%
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div> */}
                   </div>
                 </div>
               </motion.div>
@@ -342,14 +337,4 @@ export default function ProductTabs({ product }) {
       </div>
     </section>
   );
-}
-
-type IngredientKey = keyof typeof descriptions;
-
-export function getIngredientDescription(ingredient: string): string {
-  if (ingredient in descriptions) {
-    return descriptions[ingredient as IngredientKey];
-  }
-
-  return 'Ingrediente natural seleccionado por sus propiedades beneficiosas para la piel.';
 }

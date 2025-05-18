@@ -4,23 +4,28 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { useCart } from '../../context/CartContext';
+import { Product as GraphQLProduct } from '@/lib/graphql/types';
 
 // Add proper TypeScript interface for props
 interface ProductInfoProps {
-  product: {
-    id: number;
-    name: string;
-    description: string;
-    price: number;
-    oldPrice?: number;
-    rating: number;
-    reviews: number;
-    isNew?: boolean;
-    isSale?: boolean;
-    stock: number;
-    sizes?: string[];
-    ingredients: string[];
-  };
+  product:
+    | GraphQLProduct
+    | {
+        id: number | string;
+        name: string;
+        description: string;
+        price: number;
+        oldPrice?: number;
+        rating: number;
+        reviews: number;
+        isNew?: boolean;
+        isSale?: boolean;
+        stock: number;
+        sizes?: string[];
+        ingredients: string[];
+        image?: { url?: string } | string;
+        category?: { id: string; name: string } | string;
+      };
 }
 
 const ProductInfo = ({ product }: ProductInfoProps) => {
@@ -79,7 +84,7 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
           <div className='flex items-center'>
             {Array.from({ length: 5 }).map((_, i) => (
               <svg
-                key={i}
+                key={`star-${i}`}
                 className={`w-5 h-5 ${
                   i < Math.floor(product.rating)
                     ? 'text-yellow-400'
@@ -129,14 +134,19 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
       <div className='bg-neutral-50 p-4 rounded-lg'>
         <h3 className='font-medium text-primary-800 mb-2'>Ingredientes</h3>
         <div className='flex flex-wrap gap-2'>
-          {product.ingredients.map((ingredient) => (
-            <span
-              key={ingredient}
-              className='bg-white text-neutral-700 px-3 py-1 rounded-full text-sm border border-neutral-200'
-            >
-              {ingredient}
-            </span>
-          ))}
+          {Array.isArray(product.ingredients) &&
+            product.ingredients.map((ingredient, index) => (
+              <span
+                key={`ingredient-${index}-${
+                  typeof ingredient === 'string'
+                    ? ingredient.substring(0, 10)
+                    : index
+                }`}
+                className='bg-white text-neutral-700 px-3 py-1 rounded-full text-sm border border-neutral-200'
+              >
+                {ingredient}
+              </span>
+            ))}
         </div>
       </div>
 
@@ -153,9 +163,9 @@ const ProductInfo = ({ product }: ProductInfoProps) => {
             </Link>
           </div>
           <div className='flex flex-wrap gap-2'>
-            {product.sizes.map((size) => (
+            {product.sizes.map((size, index) => (
               <button
-                key={size}
+                key={`size-${index}-${size}`}
                 onClick={() => setSelectedSize(size)}
                 className={`px-4 py-2 rounded-lg text-sm font-medium border ${
                   selectedSize === size
