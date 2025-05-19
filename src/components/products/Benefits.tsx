@@ -159,20 +159,12 @@ export default function Benefits() {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-          className='relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-primary-50 to-white  border-primary-100 shadow-xl'
+          className='relative mb-24 rounded-3xl overflow-hidden bg-gradient-to-r from-primary-50 to-white border border-primary-100 shadow-xl'
         >
-          <div className='absolute top-0 right-0 w-1/2 h-full z-0 overflow-hidden'>
-            <Image
-              src='/img/productos/jabon-5.jpg'
-              alt='Ingredientes naturales'
-              width={600}
-              height={500}
-              className='object-cover object-center w-full h-full opacity-70'
-            />
-            <div className='absolute inset-0 bg-gradient-to-l from-transparent to-primary-50/95'></div>
-          </div>
-          <div className='relative z-10 grid grid-cols-1 md:grid-cols-2 gap-8 p-6 md:p-12'>
-            <div>
+          {/* Contenedor principal con grid para control preciso en desktop */}
+          <div className='grid grid-cols-1 md:grid-cols-2'>
+            {/* Columna izquierda - contenido de texto (siempre visible) */}
+            <div className='relative z-10 p-6 md:p-10 order-2 md:order-1'>
               <div className='inline-flex items-center px-3 py-1 rounded-full bg-white shadow-sm border border-primary-100 mb-4'>
                 <span className='text-xs font-medium text-primary-700'>
                   Compromiso con la calidad
@@ -220,6 +212,19 @@ export default function Benefits() {
                   <ArrowRight className='ml-2 w-4 h-4' />
                 </Link>
               </div>
+            </div>
+
+            {/* Columna derecha - imagen (arriba en móvil, derecha en desktop) */}
+            <div className='w-full h-64 sm:h-80 md:h-full overflow-hidden relative order-1 md:order-2'>
+              <Image
+                src='/img/productos/jabon-5.jpg'
+                alt='Ingredientes naturales'
+                width={600}
+                height={500}
+                className='object-cover object-center w-full h-full opacity-80'
+              />
+              {/* Gradiente que cambia dirección según el dispositivo */}
+              <div className='absolute inset-0 bg-gradient-to-b md:bg-gradient-to-l from-transparent via-transparent to-primary-50 md:to-primary-50/90'></div>
             </div>
           </div>
         </motion.div>

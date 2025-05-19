@@ -142,46 +142,51 @@ export default function FeaturedProducts() {
           </div>
         </motion.div>
 
-        {/* Grid de productos */}
+        {/* Grid de productos - Versión unificada para todos los dispositivos */}
         <motion.div
           variants={containerVariants}
           initial='hidden'
           animate={isInView ? 'visible' : 'hidden'}
-          className='relative'
+          className='relative px-4 sm:px-0'
         >
-          {/* Desktop view */}
-          <div className='hidden md:grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8'>
-            {featuredProducts.map((product, index) => (
-              <ProductCard
+          {/* Versión responsive unificada - similar a tu ejemplo de referencia */}
+          <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8'>
+            {featuredProducts.slice(0, 3).map((product, index) => (
+              <motion.div
                 key={`featured-product-${product.id || index}-${Date.now()}`}
-                product={product}
-                variants={undefined}
-              />
+                className='h-full'
+              >
+                <ProductCard product={product} variants={undefined} />
+              </motion.div>
             ))}
           </div>
 
-          {/* Mobile view */}
-          <div className='md:hidden'>
-            <Swiper
-              modules={[Pagination, Navigation, Autoplay]}
-              spaceBetween={16}
-              slidesPerView={1.2}
-              centeredSlides={false}
-              pagination={{
-                clickable: true,
-                dynamicBullets: true,
-              }}
-              className='products-swiper overflow-visible pb-12'
-            >
-              {featuredProducts.map((product, index) => (
-                <SwiperSlide
-                  key={`featured-mobile-${product.id || index}-${Date.now()}`}
-                >
-                  <ProductCard product={product} variants={undefined} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+          {/* Versión Swiper para dispositivos muy pequeños (opcional) */}
+          {featuredProducts.length > 3 && (
+            <div className='mt-8 block sm:hidden'>
+              <Swiper
+                modules={[Pagination, Navigation, Autoplay]}
+                spaceBetween={16}
+                slidesPerView={1.2}
+                centeredSlides={false}
+                pagination={{
+                  clickable: true,
+                  dynamicBullets: true,
+                }}
+                className='products-swiper overflow-visible pb-12'
+              >
+                {featuredProducts.slice(3).map((product, index) => (
+                  <SwiperSlide
+                    key={`featured-mobile-extra-${
+                      product.id || index
+                    }-${Date.now()}`}
+                  >
+                    <ProductCard product={product} variants={undefined} />
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            </div>
+          )}
         </motion.div>
 
         {/* Botón "Ver toda la colección" */}
