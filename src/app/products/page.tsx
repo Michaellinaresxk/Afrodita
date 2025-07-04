@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { motion, AnimatePresence, useInView } from 'framer-motion';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -10,23 +10,26 @@ import { useCategories } from '@/hooks/useHygraphData';
 import { Product } from '@/lib/graphql/types';
 import { productsService } from '@/lib/hygraph/productsService';
 
-const ProductsPage = () => {
-  const router = useRouter();
+// Componente Loading para Suspense
+const ProductsLoading = () => (
+  <div className='flex flex-col justify-center items-center py-20'>
+    <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 mb-4'></div>
+    <p className='text-neutral-600'>Cargando página...</p>
+  </div>
+);
 
-  // Obtener parámetros de búsqueda de la URL
+// Componente principal que usa useSearchParams
+const ProductsContent = () => {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
 
-  // Estado local para productos y filtrado
+  // ... resto del código del componente original
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState<string | null>(null);
-
-  // Estado local para filtrado y ordenamiento
-  const [activeCategory, setActiveCategory] = useState(
-    categoryFromUrl || 'todos'
-  );
+  const [activeCategory, setActiveCategory] = useState(categoryFromUrl || 'todos');
   const [sortBy, setSortBy] = useState('popular');
   const [searchQuery, setSearchQuery] = useState('');
   const [showFilters, setShowFilters] = useState(false);
@@ -38,25 +41,24 @@ const ProductsPage = () => {
     error: categoriesError,
   } = useCategories();
 
-  // Cargar productos directamente usando productsService
+  const headerRef = useRef(null);
+  const productsSectionRef = useRef(null);
+  const isInView = useInView(productsSectionRef, { once: true, amount: 0.1 });
+
+  // Todos los useEffect y funciones van aquí igual que antes...
   useEffect(() => {
     const loadProducts = async () => {
       try {
         setProductsLoading(true);
         setProductsError(null);
 
-        console.log(`Cargando productos con categoría: ${activeCategory}`);
         let productData: Product[];
-
         if (activeCategory === 'todos') {
           productData = await productsService.getAllProducts();
         } else {
-          productData = await productsService.getProductsByCategory(
-            activeCategory
-          );
+          productData = await productsService.getProductsByCategory(activeCategory);
         }
 
-        console.log(`Cargados ${productData.length} productos`);
         setProducts(productData);
       } catch (err) {
         console.error('Error al cargar productos:', err);
@@ -69,22 +71,12 @@ const ProductsPage = () => {
     loadProducts();
   }, [activeCategory]);
 
-  const loading = productsLoading || categoriesLoading;
-  const error = productsError || categoriesError;
-
-  const headerRef = useRef(null);
-  const productsSectionRef = useRef(null);
-  const isInView = useInView(productsSectionRef, { once: true, amount: 0.1 });
-
-  // Efecto para inicializar la categoría desde la URL
   useEffect(() => {
     if (categoryFromUrl) {
       setActiveCategory(categoryFromUrl);
-      console.log(`Categoría establecida desde URL: ${categoryFromUrl}`);
     }
   }, [categoryFromUrl]);
 
-  // Efecto para actualizar la URL cuando cambia la categoría
   useEffect(() => {
     if (activeCategory === 'todos') {
       router.push('/products');
@@ -93,7 +85,6 @@ const ProductsPage = () => {
     }
   }, [activeCategory, router]);
 
-  // Efecto para gestionar scroll y filtros sticky
   useEffect(() => {
     const handleScroll = () => {
       if (headerRef.current) {
@@ -104,22 +95,14 @@ const ProductsPage = () => {
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Efecto para filtrar y ordenar productos
   useEffect(() => {
     if (!products || products.length === 0) return;
 
-    console.log(
-      `Filtrando productos: búsqueda=${searchQuery}, orden=${sortBy}`
-    );
-
     let result = [...products];
 
-    // Filtrar por búsqueda
     if (searchQuery) {
       const query = searchQuery.toLowerCase();
       result = result.filter(
@@ -135,7 +118,6 @@ const ProductsPage = () => {
       );
     }
 
-    // Ordenar productos
     switch (sortBy) {
       case 'price-low':
         result.sort((a, b) => a.price - b.price);
@@ -152,9 +134,11 @@ const ProductsPage = () => {
         break;
     }
 
-    console.log(`Productos filtrados: ${result.length} encontrados`);
     setFilteredProducts(result);
   }, [sortBy, searchQuery, products]);
+
+  const loading = productsLoading || categoriesLoading;
+  const error = productsError || categoriesError;
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -178,7 +162,6 @@ const ProductsPage = () => {
 
   const handleCategoryClick = (categoryId: string) => {
     setActiveCategory(categoryId);
-    console.log(`Cambiando a categoría: ${categoryId}`);
   };
 
   return (
@@ -214,8 +197,7 @@ const ProductsPage = () => {
               className='text-white/90 text-lg max-w-2xl mx-auto'
             >
               Jabones artesanales elaborados con ingredientes 100% naturales y
-              técnicas tradicionales para el cuidado completo y sublime de tu
-              piel.
+              técnicas tradicionales para el cuidado completo y sublime de tu piel.
             </motion.p>
           </div>
         </div>
@@ -307,7 +289,6 @@ const ProductsPage = () => {
                 </svg>
               </div>
 
-              {/* Selector de orden */}
               <div className='ml-4'>
                 <select
                   value={sortBy}
@@ -367,12 +348,8 @@ const ProductsPage = () => {
       </div>
 
       {/* Sección principal de productos */}
-      <div
-        ref={productsSectionRef}
-        className='bg-neutral-50 py-12 min-h-screen'
-      >
+      <div ref={productsSectionRef} className='bg-neutral-50 py-12 min-h-screen'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
-          {/* Resultados e información */}
           <div className='flex flex-wrap items-center justify-between mb-8'>
             <div>
               <h2 className='text-2xl font-serif font-bold text-primary-900'>
@@ -380,20 +357,17 @@ const ProductsPage = () => {
               </h2>
               {!loading && !error && (
                 <p className='text-neutral-600'>
-                  Mostrando {filteredProducts.length} de {products?.length || 0}{' '}
-                  productos
+                  Mostrando {filteredProducts.length} de {products?.length || 0} productos
                 </p>
               )}
             </div>
 
-            {/* Tags de filtros activos */}
             {!loading && !error && activeCategory !== 'todos' && (
               <div className='flex items-center mt-2 md:mt-0'>
                 <span className='text-sm text-neutral-500 mr-2'>Filtros:</span>
                 <div className='flex flex-wrap gap-2'>
                   <div className='bg-primary-100 text-primary-800 text-sm px-3 py-1 rounded-full flex items-center'>
-                    {categories.find((c) => c.id === activeCategory)?.name ||
-                      activeCategory}
+                    {categories.find((c) => c.id === activeCategory)?.name || activeCategory}
                     <button
                       onClick={() => handleCategoryClick('todos')}
                       className='ml-1 text-primary-600 hover:text-primary-800'
@@ -403,7 +377,6 @@ const ProductsPage = () => {
                         fill='none'
                         stroke='currentColor'
                         viewBox='0 0 24 24'
-                        xmlns='http://www.w3.org/2000/svg'
                       >
                         <path
                           strokeLinecap='round'
@@ -419,7 +392,6 @@ const ProductsPage = () => {
             )}
           </div>
 
-          {/* Estado de carga */}
           {loading ? (
             <div className='flex flex-col justify-center items-center py-20'>
               <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 mb-4'></div>
@@ -428,13 +400,7 @@ const ProductsPage = () => {
           ) : error ? (
             <div className='bg-white rounded-xl shadow-md p-12 text-center'>
               <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-500 mb-6'>
-                <svg
-                  className='w-8 h-8'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
+                <svg className='w-8 h-8' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
@@ -449,28 +415,13 @@ const ProductsPage = () => {
               <p className='text-neutral-600 mb-6'>{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500'
+                className='inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700'
               >
-                <svg
-                  className='w-5 h-5 mr-2'
-                  fill='none'
-                  stroke='currentColor'
-                  viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    strokeWidth='2'
-                    d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-                  ></path>
-                </svg>
                 Intentar de nuevo
               </button>
             </div>
           ) : (
             <>
-              {/* Grid de productos */}
               {filteredProducts.length > 0 ? (
                 <motion.div
                   variants={containerVariants}
@@ -479,10 +430,7 @@ const ProductsPage = () => {
                   className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 md:gap-8'
                 >
                   {filteredProducts.map((product) => (
-                    <motion.div
-                      key={`product-grid-${product.id}`}
-                      variants={cardVariants}
-                    >
+                    <motion.div key={`product-grid-${product.id}`} variants={cardVariants}>
                       <ProductCard product={product} variants={undefined} />
                     </motion.div>
                   ))}
@@ -490,13 +438,7 @@ const ProductsPage = () => {
               ) : (
                 <div className='bg-white rounded-xl shadow-md p-12 text-center'>
                   <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-neutral-100 text-neutral-400 mb-6'>
-                    <svg
-                      className='w-8 h-8'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
+                    <svg className='w-8 h-8' fill='none' stroke='currentColor' viewBox='0 0 24 24'>
                       <path
                         strokeLinecap='round'
                         strokeLinejoin='round'
@@ -509,8 +451,7 @@ const ProductsPage = () => {
                     No se encontraron productos
                   </h3>
                   <p className='text-neutral-600 mb-6'>
-                    No hay productos que coincidan con tus criterios de
-                    búsqueda.
+                    No hay productos que coincidan con tus criterios de búsqueda.
                   </p>
                   <button
                     onClick={() => {
@@ -519,20 +460,6 @@ const ProductsPage = () => {
                     }}
                     className='inline-flex items-center text-primary-600 hover:text-primary-800 font-medium'
                   >
-                    <svg
-                      className='w-5 h-5 mr-2'
-                      fill='none'
-                      stroke='currentColor'
-                      viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
-                    >
-                      <path
-                        strokeLinecap='round'
-                        strokeLinejoin='round'
-                        strokeWidth='2'
-                        d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-                      ></path>
-                    </svg>
                     Restablecer filtros
                   </button>
                 </div>
@@ -542,6 +469,15 @@ const ProductsPage = () => {
         </div>
       </div>
     </>
+  );
+};
+
+// Componente principal con Suspense
+const ProductsPage = () => {
+  return (
+    <Suspense fallback={<ProductsLoading />}>
+      <ProductsContent />
+    </Suspense>
   );
 };
 
