@@ -1,478 +1,461 @@
 'use client';
 
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useEffect, useState, useRef } from 'react';
 
 export default function Hero() {
-  const [scrollY, setScrollY] = useState(0);
-  const sectionRef = useRef(null);
-  const [isMounted, setIsMounted] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start start", "end start"]
+  });
 
-  // Control del efecto parallax al hacer scroll
+  const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+  const opacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+
+  // Smooth mouse tracking
+  const smoothMousePosition = useSpring({ x: 0, y: 0 }, { stiffness: 50, damping: 20 });
+
   useEffect(() => {
-    setIsMounted(true);
-
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
+    const handleMouseMove = (e: MouseEvent) => {
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width;
+        const y = (e.clientY - rect.top) / rect.height;
+        setMousePosition({ x, y });
+        smoothMousePosition.set({ x: x - 0.5, y: y - 0.5 });
+      }
     };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
-  // Animaciones con Framer Motion
-  const fadeInUp = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    },
-  };
-
-  const staggerContainer = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.12,
-        delayChildren: 0.3,
-      },
-    },
-  };
-
-  const buttonVariants = {
-    hidden: { opacity: 0, y: 20 },
-    // @ts-ignore
-    visible: (custom) => ({
-      opacity: 1,
-      y: 0,
-      transition: {
-        delay: custom * 0.1 + 0.5,
-        duration: 0.6,
-        ease: [0.22, 1, 0.36, 1],
-      },
-    }),
-    hover: {
-      scale: 1.03,
-      boxShadow:
-        '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1)',
-      transition: { duration: 0.3 },
-    },
-  };
-
-  // Efecto para animar las letras individualmente
-  const title = 'Cuida tu piel con la esencia de la naturaleza';
-  const titleWords = title.split(' ');
+    const container = containerRef.current;
+    if (container) {
+      container.addEventListener('mousemove', handleMouseMove);
+      return () => container.removeEventListener('mousemove', handleMouseMove);
+    }
+  }, [smoothMousePosition]);
 
   return (
-    <section
-      ref={sectionRef}
-      className='relative overflow-hidden min-h-screen flex items-center'
+    <motion.section
+      ref={containerRef}
+      className="relative min-h-screen overflow-hidden bg-gradient-to-br from-neutral-50 via-primary-50/20 to-neutral-100 pt-20 md:pt-24"
+      style={{ opacity, scale }}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Formas decorativas avanzadas */}
-      <div className='absolute top-1/4 right-[10%] w-64 h-64 rounded-full bg-gradient-to-br from-pink-100/20 to-pink-200/30 blur-3xl animate-pulse-slow'></div>
-      <div className='absolute top-1/2 left-[5%] w-72 h-72 rounded-full bg-gradient-to-tr from-primary-100/20 to-primary-200/30 blur-3xl animate-float-slow'></div>
-      <div className='absolute bottom-1/4 right-[20%] w-48 h-48 rounded-full bg-gradient-to-bl from-secondary-100/20 to-secondary-200/20 blur-3xl animate-float-slow'></div>
-
-      {/* Patrón de puntos decorativo */}
-      <div className='absolute inset-0 z-0 opacity-5'>
-        <div
-          className='absolute inset-0'
+      {/* Dynamic Background Pattern */}
+      <div className="absolute inset-0">
+        <motion.div
+          className="absolute inset-0 opacity-20"
           style={{
-            backgroundImage:
-              'radial-gradient(circle, #fff 1px, transparent 1px)',
-            backgroundSize: '30px 30px',
+            background: `radial-gradient(circle at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, 
+              rgba(79, 70, 229, 0.1) 0%, 
+              rgba(79, 70, 229, 0.05) 25%, 
+              transparent 50%)`
           }}
-        ></div>
+        />
+        
+        {/* Floating Soap Bubbles */}
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute rounded-full bg-white/30 backdrop-blur-sm"
+            style={{
+              width: Math.random() * 40 + 15,
+              height: Math.random() * 40 + 15,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [-15, -30, -15],
+              x: [-8, 8, -8],
+              scale: [1, 1.1, 1],
+              opacity: [0.2, 0.4, 0.2],
+            }}
+            transition={{
+              duration: 4 + Math.random() * 3,
+              repeat: Infinity,
+              delay: Math.random() * 2,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
       </div>
 
-      {/* Background Image con Parallax mejorado */}
+      {/* Interactive Light Rays */}
       <motion.div
-        className='absolute inset-0 z-0'
-        style={{ y: isMounted ? scrollY * 0.15 : 0 }}
-      >
-        <Image
-          src='/img/bg.jpg'
-          alt='Jabones naturales de lujo'
-          fill
-          style={{ objectFit: 'cover' }}
-          priority
-          quality={100}
-          className='filter brightness-[0.7] contrast-[1.05]'
-        />
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `conic-gradient(from ${mousePosition.x * 360}deg at ${mousePosition.x * 100}% ${mousePosition.y * 100}%, 
+            transparent 0deg, 
+            rgba(79, 70, 229, 0.08) 60deg, 
+            rgba(79, 70, 229, 0.06) 120deg, 
+            transparent 180deg)`
+        }}
+      />
 
-        {/* Overlay con gradiente moderno */}
-        <div className='absolute inset-0 bg-gradient-to-br from-primary-900/80 via-primary-800/70 to-primary-900/75 backdrop-blur-[2px]'></div>
-
-        {/* Texturas adicionales */}
-        <div className='absolute inset-0 mix-blend-overlay opacity-10'></div>
-      </motion.div>
-
-      <div className='container mx-auto px-4 sm:px-6 lg:px-8 relative z-10'>
-        <div className='grid grid-cols-1 md:grid-cols-5 gap-12 items-center'>
-          <div className='md:col-span-3'>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10 min-h-screen flex items-center py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center w-full">
+          
+          {/* Left Column - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: -100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="space-y-6 lg:space-y-8 order-2 lg:order-1"
+          >
+            {/* Floating Badge */}
             <motion.div
-              initial='hidden'
-              animate='visible'
-              variants={staggerContainer}
-              className='text-white'
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3, duration: 0.8 }}
+              className="relative"
             >
-              {/* Card con glassmorphism moderno */}
-              <div className='relative overflow-hidden backdrop-blur-md p-8 md:p-10 rounded-2xl bg-white/[0.03] border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.2)]'>
-                {/* Detalles decorativos */}
-                <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/30 to-transparent'></div>
-                <div className='absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-white/30 via-transparent to-transparent'></div>
-
-                {/* Badge moderna */}
+              <div className="inline-flex items-center gap-3 px-4 py-2 lg:px-6 lg:py-3 rounded-full bg-gradient-to-r from-primary-100/80 to-primary-200/60 backdrop-blur-xl border border-primary-200/50 shadow-lg">
                 <motion.div
-                  variants={fadeInUp}
-                  className='inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full bg-white/10 backdrop-blur-md border-l border-t border-white/20'
-                >
-                  <span className='w-2 h-2 rounded-full bg-secondary-300 animate-pulse'></span>
-                  <span className='text-sm tracking-wider uppercase text-white/90 font-medium'>
-                    Belleza Natural Orgánica
-                  </span>
-                </motion.div>
-
-                {/* Título con animación de palabras */}
-                <div className='mb-6'>
-                  {titleWords.map((word, i) => (
-                    <motion.span
-                      key={i}
-                      custom={i}
-                      variants={{
-                        hidden: { opacity: 0, y: 20 },
-                        visible: (i) => ({
-                          opacity: 1,
-                          y: 0,
-                          transition: {
-                            delay: i * 0.08,
-                            duration: 0.6,
-                            ease: [0.22, 1, 0.36, 1],
-                          },
-                        }),
-                      }}
-                      className={`inline-block font-serif text-4xl md:text-5xl lg:text-6xl font-bold 
-                        ${
-                          word === 'esencia'
-                            ? 'text-secondary-200 relative'
-                            : ''
-                        } mr-3 md:mr-4`}
-                    >
-                      {word}
-                      {word === 'esencia' && (
-                        <motion.div
-                          initial={{ width: '0%' }}
-                          animate={{ width: '100%' }}
-                          transition={{ delay: 1.5, duration: 0.8 }}
-                          className='absolute bottom-1 left-0 h-[6px] bg-secondary-400/30 -z-10 rounded-full'
-                        ></motion.div>
-                      )}
-                    </motion.span>
-                  ))}
-                </div>
-
-                {/* Descripción con mejor estilización */}
-                <motion.p
-                  variants={fadeInUp}
-                  className='text-lg md:text-xl mb-10 max-w-xl leading-relaxed text-white/90 font-light'
-                >
-                  Descubre nuestra exclusiva colección de jabones artesanales,
-                  formulados con ingredientes 100% naturales y orgánicos para el
-                  <span className='relative mx-1'>
-                    <span className='relative z-10 font-normal'>
-                      cuidado diario
-                    </span>
-                    <span className='absolute bottom-0 left-0 w-full h-[5px] bg-primary-400/20 rounded-full -z-10'></span>
-                  </span>
-                  de tu piel.
-                </motion.p>
-
-                {/* Botones con diseño moderno */}
-                <div className='flex flex-col sm:flex-row gap-4'>
-                  <motion.div
-                    variants={buttonVariants}
-                    custom={0}
-                    whileHover='hover'
-                    className='relative group'
-                  >
-                    <div className='absolute inset-0 bg-gradient-to-r from-secondary-500/60 to-primary-500/60 rounded-full blur-md opacity-80 group-hover:opacity-100 transition-opacity'></div>
-                    <Link
-                      href='/products'
-                      className='relative bg-gradient-to-r from-primary-500 to-primary-400 hover:from-primary-400 hover:to-primary-300 text-white px-8 py-4 rounded-full transition-all duration-300 font-medium text-center flex items-center justify-center group overflow-hidden'
-                    >
-                      <span className='relative z-10'>Ver Productos</span>
-                      <span className='relative z-10 ml-2 group-hover:translate-x-1 transition-transform duration-300'>
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          className='h-5 w-5'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          stroke='currentColor'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            strokeWidth={2}
-                            d='M14 5l7 7m0 0l-7 7m7-7H3'
-                          />
-                        </svg>
-                      </span>
-                      <div className='absolute top-0 -inset-full h-full w-1/2 z-5 block transform -skew-x-12 bg-gradient-to-r from-transparent to-white opacity-20 group-hover:animate-shine'></div>
-                    </Link>
-                  </motion.div>
-
-                  <motion.div
-                    variants={buttonVariants}
-                    custom={1}
-                    whileHover='hover'
-                  >
-                    <Link
-                      href='/sobre-nosotros'
-                      className='bg-transparent text-white px-8 py-4 rounded-full transition-all duration-300 font-medium text-center border border-white/20 hover:bg-white/5 flex items-center justify-center'
-                    >
-                      <span>Nuestra Historia</span>
-                      <span className='ml-2 opacity-60'>→</span>
-                    </Link>
-                  </motion.div>
-                </div>
-
-                {/* Indicadores de confianza */}
-                <motion.div
-                  variants={fadeInUp}
-                  className='flex items-center gap-4 mt-8 pt-6 border-t border-white/10'
-                >
-                  <div className='flex items-center gap-1.5'>
-                    <div className='w-4 h-4 rounded-full bg-green-400/80 flex items-center justify-center'>
-                      <svg
-                        className='w-2.5 h-2.5 text-white'
-                        fill='currentColor'
-                        viewBox='0 0 20 20'
-                      >
-                        <path d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'></path>
-                      </svg>
-                    </div>
-                    <span className='text-xs text-white/80'>100% Natural</span>
-                  </div>
-                  <div className='flex items-center gap-1.5'>
-                    <div className='w-4 h-4 rounded-full bg-green-400/80 flex items-center justify-center'>
-                      <svg
-                        className='w-2.5 h-2.5 text-white'
-                        fill='currentColor'
-                        viewBox='0 0 20 20'
-                      >
-                        <path d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'></path>
-                      </svg>
-                    </div>
-                    <span className='text-xs text-white/80'>Envío Express</span>
-                  </div>
-                  <div className='flex items-center gap-1.5'>
-                    <div className='w-4 h-4 rounded-full bg-green-400/80 flex items-center justify-center'>
-                      <svg
-                        className='w-2.5 h-2.5 text-white'
-                        fill='currentColor'
-                        viewBox='0 0 20 20'
-                      >
-                        <path d='M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z'></path>
-                      </svg>
-                    </div>
-                    <span className='text-xs text-white/80'>Sin Químicos</span>
-                  </div>
-                </motion.div>
+                  className="w-2 h-2 lg:w-3 lg:h-3 rounded-full bg-gradient-to-r from-green-400 to-emerald-500"
+                  animate={{ scale: [1, 1.2, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                />
+                <span className="text-xs lg:text-sm font-semibold text-primary-800 tracking-wide">
+                  ✨ Hecho a Mano con Amor
+                </span>
               </div>
             </motion.div>
-          </div>
 
-          {/* Columna de imagen mejorada */}
-          <div className='md:col-span-2 hidden md:block'>
+            {/* Dynamic Title */}
+            <div className="space-y-2 lg:space-y-4">
+              <motion.h1
+                initial={{ opacity: 0, y: 50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 1 }}
+                className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold leading-tight lg:leading-none"
+              >
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-primary-700 to-primary-800">
+                  Jabones
+                </span>
+                <span className="block text-transparent bg-clip-text bg-gradient-to-r from-secondary-600 via-secondary-700 to-secondary-800">
+                  Artesanales
+                </span>
+                <motion.span
+                  className="block text-neutral-800 relative"
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 1, duration: 0.8 }}
+                >
+                  Premium
+                  <motion.div
+                    className="absolute -bottom-1 lg:-bottom-2 left-0 h-2 lg:h-3 bg-gradient-to-r from-primary-300/60 to-secondary-300/60 rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: "100%" }}
+                    transition={{ delay: 1.5, duration: 1.2 }}
+                  />
+                </motion.span>
+              </motion.h1>
+            </div>
+
+            {/* Animated Description */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
-              className='relative'
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.8, duration: 1 }}
+              className="space-y-4 lg:space-y-6"
             >
-              <div className='relative h-[600px] w-full'>
-                {/* Círculo decorativo con efecto de cristal */}
-                <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[480px] h-[480px] rounded-full bg-gradient-to-br from-white/20 to-white/5 backdrop-blur-md border border-white/20 overflow-hidden shadow-[0_0_80px_rgba(255,255,255,0.15)]'>
-                  {/* Reflejos en el círculo */}
-                  <div className='absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/40 to-transparent'></div>
-                  <div className='absolute -top-10 -right-10 w-40 h-40 rounded-full bg-primary-300/10 blur-xl'></div>
-                  <div className='absolute -bottom-20 -left-20 w-60 h-60 rounded-full bg-secondary-300/10 blur-xl'></div>
-                </div>
+              <p className="text-lg lg:text-xl text-neutral-700 leading-relaxed max-w-lg">
+                Descubre la <span className="font-semibold text-primary-700">pureza natural</span> en cada barra. 
+                Nuestros jabones artesanales combinan <span className="font-semibold text-secondary-700">ingredientes orgánicos</span> 
+                con técnicas tradicionales para crear una experiencia de lujo para tu piel.
+              </p>
 
-                {/* Imagen principal con efectos mejorados */}
+              {/* Feature Pills */}
+              <div className="flex flex-wrap gap-2 lg:gap-3">
+                {[
+                  { icon: "🌿", text: "100% Natural", color: "from-primary-500 to-primary-600" },
+                  { icon: "🏺", text: "Hecho a Mano", color: "from-secondary-500 to-secondary-600" },
+                  { icon: "🌍", text: "Eco-Friendly", color: "from-neutral-500 to-neutral-600" },
+                  { icon: "💎", text: "Premium", color: "from-primary-600 to-secondary-600" }
+                ].map((feature, index) => (
+                  <motion.div
+                    key={feature.text}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 1.2 + index * 0.1, duration: 0.6 }}
+                    whileHover={{ scale: 1.05 }}
+                    className={`px-3 py-1.5 lg:px-4 lg:py-2 rounded-full bg-gradient-to-r ${feature.color} text-white font-medium text-xs lg:text-sm shadow-lg flex items-center gap-2`}
+                  >
+                    <span>{feature.icon}</span>
+                    <span>{feature.text}</span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* CTA Buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.5, duration: 0.8 }}
+              className="flex flex-col sm:flex-row gap-3 lg:gap-4 pt-2 lg:pt-4"
+            >
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative group"
+              >
+                <div className="absolute inset-0 bg-gradient-to-r from-primary-500/60 to-secondary-500/60 rounded-2xl blur-lg opacity-70 group-hover:opacity-100 transition-opacity" />
+                <Link
+                  href="/products"
+                  className="relative bg-gradient-to-r from-primary-500 to-secondary-500 text-white px-6 py-3 lg:px-8 lg:py-4 rounded-2xl font-semibold text-base lg:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 flex items-center justify-center gap-2 lg:gap-3 group"
+                >
+                  <span>Explorar Colección</span>
+                  <motion.svg
+                    className="w-4 h-4 lg:w-5 lg:h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    whileHover={{ x: 5 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </motion.svg>
+                </Link>
+              </motion.div>
+
+              <motion.div
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Link
+                  href="/about"
+                  className="px-6 py-3 lg:px-8 lg:py-4 rounded-2xl font-semibold text-base lg:text-lg border-2 border-primary-500 text-primary-600 hover:bg-primary-50 transition-all duration-300 flex items-center justify-center gap-2 lg:gap-3"
+                >
+                  <span>Nuestro Proceso</span>
+                  <svg className="w-4 h-4 lg:w-5 lg:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </Link>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column - Interactive Product Showcase */}
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+            className="relative h-64 sm:h-80 lg:h-full flex items-center justify-center order-1 lg:order-2"
+          >
+            {/* Main Product Circle */}
+            <div className="relative w-[500px] h-[500px]">
+              
+              {/* Rotating Ring */}
+              <motion.div
+                className="absolute inset-0 rounded-full border-2 border-dashed border-amber-300/50"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+              />
+
+              {/* Central Product Container */}
+              <motion.div
+                className="absolute inset-16 rounded-full bg-gradient-to-br from-white/80 to-amber-50/80 backdrop-blur-xl shadow-2xl border border-white/50 overflow-hidden"
+                style={{
+                  transform: useTransform(
+                    smoothMousePosition,
+                    ({ x, y }) => `rotateY(${x * 10}deg) rotateX(${-y * 10}deg)`
+                  ),
+                }}
+                whileHover={{ scale: 1.05 }}
+              >
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-100/30 to-orange-100/30" />
+                
+                {/* Main Product Image */}
                 <motion.div
+                  className="relative w-full h-full flex items-center justify-center"
                   animate={{
-                    y: [0, -12, 0],
-                    rotate: [0, 1, 0],
-                    filter: [
-                      'drop-shadow(0 25px 25px rgba(0,0,0,0.15))',
-                      'drop-shadow(0 35px 35px rgba(0,0,0,0.2))',
-                      'drop-shadow(0 25px 25px rgba(0,0,0,0.15))',
-                    ],
+                    y: [0, -10, 0],
+                    rotateY: [0, 5, 0],
                   }}
                   transition={{
+                    duration: 4,
                     repeat: Infinity,
-                    duration: 6,
-                    ease: 'easeInOut',
+                    ease: "easeInOut",
                   }}
-                  className='relative z-10'
                 >
                   <Image
-                    src='/img/jabon.jpg'
-                    alt='Jabones naturales premium'
-                    fill
-                    style={{ objectFit: 'contain' }}
-                    className='drop-shadow-2xl'
+                    src="/img/jabon.jpg"
+                    alt="Jabón artesanal premium"
+                    width={300}
+                    height={300}
+                    className="object-contain drop-shadow-2xl"
                   />
                 </motion.div>
 
-                {/* Elementos decorativos flotantes modernos */}
-                <motion.div
-                  animate={{
-                    y: [0, -15, 0],
-                    x: [0, 10, 0],
-                    rotate: [0, -3, 0],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 8,
-                    ease: 'easeInOut',
-                    delay: 1,
-                  }}
-                  className='absolute top-[15%] right-[10%] z-10'
-                >
-                  <div className='py-2 px-3 rounded-xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/40 flex items-center gap-2'>
-                    <div className='w-3 h-3 rounded-full bg-green-400 animate-pulse'></div>
-                    <span className='text-xs font-medium text-primary-800'>
-                      100% Natural
-                    </span>
-                  </div>
-                </motion.div>
+                {/* Floating Particles */}
+                {[...Array(8)].map((_, i) => (
+                  <motion.div
+                    key={i}
+                    className="absolute w-2 h-2 bg-gradient-to-r from-amber-400 to-orange-400 rounded-full"
+                    style={{
+                      left: `${20 + Math.random() * 60}%`,
+                      top: `${20 + Math.random() * 60}%`,
+                    }}
+                    animate={{
+                      scale: [0, 1, 0],
+                      opacity: [0, 1, 0],
+                    }}
+                    transition={{
+                      duration: 2 + Math.random() * 2,
+                      repeat: Infinity,
+                      delay: Math.random() * 2,
+                    }}
+                  />
+                ))}
+              </motion.div>
 
+              {/* Orbiting Product Variants */}
+              {[
+                { angle: 0, image: "/img/jabon.jpg", label: "Lavanda", color: "from-purple-400 to-purple-600" },
+                { angle: 120, image: "/img/jabon.jpg", label: "Miel", color: "from-yellow-400 to-amber-500" },
+                { angle: 240, image: "/img/jabon.jpg", label: "Coco", color: "from-cyan-400 to-blue-500" },
+              ].map((product, index) => (
                 <motion.div
+                  key={product.label}
+                  className="absolute w-20 h-20 rounded-full bg-white/90 backdrop-blur-xl shadow-xl border border-white/50 overflow-hidden cursor-pointer"
+                  style={{
+                    left: "50%",
+                    top: "50%",
+                    marginLeft: "-40px",
+                    marginTop: "-40px",
+                  }}
                   animate={{
-                    y: [0, 20, 0],
-                    x: [0, -5, 0],
-                    rotate: [0, 2, 0],
+                    rotate: [product.angle, product.angle + 360],
+                    x: [0, 0],
+                    y: [0, 0],
                   }}
                   transition={{
+                    duration: 15,
                     repeat: Infinity,
-                    duration: 7,
-                    ease: 'easeInOut',
-                    delay: 0.5,
+                    ease: "linear",
                   }}
-                  className='absolute bottom-[20%] left-[5%] z-10'
+                  whileHover={{ scale: 1.2, zIndex: 10 }}
                 >
-                  <div className='py-2 px-4 rounded-xl bg-white/90 backdrop-blur-xl shadow-lg border border-white/40'>
-                    <span className='text-xs font-medium text-primary-800'>
-                      Orgánico Certificado
-                    </span>
-                  </div>
+                  <motion.div
+                    className="w-full h-full flex items-center justify-center relative"
+                    animate={{
+                      rotate: [0, -360],
+                    }}
+                    transition={{
+                      duration: 15,
+                      repeat: Infinity,
+                      ease: "linear",
+                    }}
+                    style={{
+                      transform: `translateX(${200 * Math.cos((product.angle * Math.PI) / 180)}px) translateY(${200 * Math.sin((product.angle * Math.PI) / 180)}px)`,
+                    }}
+                  >
+                    <Image
+                      src={product.image}
+                      alt={product.label}
+                      width={60}
+                      height={60}
+                      className="object-contain rounded-full"
+                    />
+                    
+                    {/* Product Label */}
+                    <motion.div
+                      className={`absolute -bottom-8 left-1/2 transform -translate-x-1/2 px-3 py-1 rounded-full bg-gradient-to-r ${product.color} text-white text-xs font-semibold shadow-lg whitespace-nowrap`}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      whileHover={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      {product.label}
+                    </motion.div>
+                  </motion.div>
                 </motion.div>
+              ))}
+            </div>
 
-                {/* Etiqueta de precio flotante */}
-                <motion.div
-                  animate={{
-                    y: [0, 10, 0],
-                    x: [0, 3, 0],
-                    rotate: [0, -1, 0],
-                  }}
-                  transition={{
-                    repeat: Infinity,
-                    duration: 5,
-                    ease: 'easeInOut',
-                    delay: 2,
-                  }}
-                  className='absolute bottom-[30%] right-[10%] z-10'
-                >
-                  <div className='py-3 px-4 rounded-full bg-secondary-500/90 text-white shadow-lg flex items-center'>
-                    <div className='text-center'>
-                      <span className='block text-xs mb-0.5'>Desde</span>
-                      <span className='block text-lg font-bold'>9.95</span>
-                    </div>
-                  </div>
-                </motion.div>
+            {/* Interactive Info Cards */}
+            <motion.div
+              className="absolute top-16 -right-4 bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/50"
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 2, duration: 0.8 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-green-400 to-emerald-500 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-neutral-800">Ingredientes Naturales</p>
+                  <p className="text-xs text-neutral-600">Sin químicos dañinos</p>
+                </div>
               </div>
             </motion.div>
-          </div>
+
+            <motion.div
+              className="absolute bottom-16 -left-4 bg-white/90 backdrop-blur-xl rounded-2xl p-4 shadow-xl border border-white/50"
+              initial={{ opacity: 0, x: -50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 2.5, duration: 0.8 }}
+              whileHover={{ scale: 1.05 }}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center">
+                  <span className="text-white text-sm font-bold">★</span>
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-neutral-800">Calidad Premium</p>
+                  <p className="text-xs text-neutral-600">Hecho con amor</p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
         </div>
       </div>
 
-      {/* Scroll Down Indicator modernizado */}
+      {/* Scroll Indicator */}
       <motion.div
-        className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10'
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 1 }}
+        className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 3, duration: 1 }}
       >
         <motion.div
-          className='flex flex-col items-center cursor-pointer'
-          animate={{ y: [0, 10, 0], opacity: [0.7, 1, 0.7] }}
-          transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+          className="flex flex-col items-center gap-2 cursor-pointer"
+          animate={{
+            y: [0, 10, 0],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
         >
-          <span className='text-white text-sm mb-2 font-light tracking-wider'>
-            Explora
-          </span>
-          <div className='w-8 h-14 rounded-full border-2 border-white/30 flex items-start justify-center p-1.5'>
+          <span className="text-sm text-neutral-600 font-medium">Descubre Más</span>
+          <div className="w-6 h-10 border-2 border-amber-400 rounded-full flex items-start justify-center p-1">
             <motion.div
-              className='w-1.5 h-3 bg-white rounded-full'
-              animate={{ y: [0, 6, 0] }}
-              transition={{
-                repeat: Infinity,
-                duration: 1.5,
-                ease: 'easeInOut',
+              className="w-1 h-2 bg-amber-400 rounded-full"
+              animate={{
+                y: [0, 12, 0],
               }}
-            ></motion.div>
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
+            />
           </div>
         </motion.div>
       </motion.div>
-
-      {/* Estilos adicionales para animaciones */}
-      <style jsx global>{`
-        @keyframes shine {
-          100% {
-            right: 125%;
-          }
-        }
-
-        @keyframes pulse-slow {
-          0%,
-          100% {
-            opacity: 0.6;
-          }
-          50% {
-            opacity: 0.8;
-          }
-        }
-
-        @keyframes float-slow {
-          0%,
-          100% {
-            transform: translateY(0px);
-          }
-          50% {
-            transform: translateY(-20px);
-          }
-        }
-
-        .animate-shine {
-          animation: shine 1.2s linear forwards;
-        }
-
-        .animate-pulse-slow {
-          animation: pulse-slow 6s ease-in-out infinite;
-        }
-
-        .animate-float-slow {
-          animation: float-slow 8s ease-in-out infinite;
-        }
-      `}</style>
-    </section>
+    </motion.section>
   );
 }
