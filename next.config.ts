@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       'us-west-2.graphassets.com',
       'us-west-2.graphassets-3.jpg.com',
       'us-west-2.graphassets-4.jpg.com',
+      'images.unsplash.com'
     ],
     remotePatterns: [
       {
