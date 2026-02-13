@@ -141,13 +141,13 @@ export const productsService = {
       const response = await client.request(queries.GET_ALL_PRODUCTS);
       console.log(
         // @ts-ignore
-        `Respuesta API - productos: ${response?.products?.length || 0}`
+        `Respuesta API - productos: ${response?.products?.length || 0}`,
       );
       // @ts-ignore
       if (response?.products && response.products.length > 0) {
         console.log(
           // @ts-ignore
-          `✅ Se encontraron ${response.products.length} productos en Hygraph`
+          `✅ Se encontraron ${response.products.length} productos en Hygraph`,
         );
         // @ts-ignore
         // Asegurar que cada producto tenga un ID único
@@ -157,7 +157,7 @@ export const productsService = {
               product.id = `hygraph-${index}-${Date.now()}`;
             }
             return product;
-          }
+          },
         );
         return uniqueProducts.map(normalizeProduct);
       }
@@ -182,13 +182,13 @@ export const productsService = {
       console.log(
         'Featured products response:',
         // @ts-ignore
-        response?.products?.length || 0
+        response?.products?.length || 0,
       );
       // @ts-ignore
       if (response?.products && response.products.length > 0) {
         console.log(
           // @ts-ignore
-          `✅ Se encontraron ${response.products.length} productos destacados en Hygraph`
+          `✅ Se encontraron ${response.products.length} productos destacados en Hygraph`,
         ); // @ts-ignore
         // Asegurar que cada producto tenga un ID único
         const uniqueProducts = response.products.map(
@@ -197,13 +197,13 @@ export const productsService = {
               product.id = `featured-${index}-${Date.now()}`;
             }
             return product;
-          }
+          },
         );
         return uniqueProducts.map(normalizeProduct);
       }
 
       console.warn(
-        'No se encontraron productos destacados en Hygraph, usando fallback'
+        'No se encontraron productos destacados en Hygraph, usando fallback',
       );
       return getFallbackProducts().filter((p) => p.featured);
     } catch (error) {
@@ -232,7 +232,7 @@ export const productsService = {
       if (!response?.product) {
         console.warn(`Producto con ID ${id} no encontrado en Hygraph`);
         const fallbackProduct = getFallbackProducts().find(
-          (p) => String(p.id) === String(id)
+          (p) => String(p.id) === String(id),
         );
         return fallbackProduct || null;
       }
@@ -241,7 +241,7 @@ export const productsService = {
     } catch (error) {
       console.error(`Error al obtener producto con ID ${id}:`, error);
       const fallbackProduct = getFallbackProducts().find(
-        (p) => String(p.id) === String(id)
+        (p) => String(p.id) === String(id),
       );
       return fallbackProduct || null;
     }
@@ -260,7 +260,7 @@ export const productsService = {
       }
 
       console.log(
-        `Obteniendo productos de categoría ${category} desde Hygraph...`
+        `Obteniendo productos de categoría ${category} desde Hygraph...`,
       );
 
       // Obtener todos los productos y filtrar manualmente
@@ -277,7 +277,7 @@ export const productsService = {
           return product.categories.some(
             (cat) =>
               typeof cat === 'string' &&
-              cat.toLowerCase() === category.toLowerCase()
+              cat.toLowerCase() === category.toLowerCase(),
           );
         }
 
@@ -300,7 +300,7 @@ export const productsService = {
 
       if (filteredProducts.length > 0) {
         console.log(
-          `✅ Se encontraron ${filteredProducts.length} productos para categoría ${category}`
+          `✅ Se encontraron ${filteredProducts.length} productos para categoría ${category}`,
         );
         return filteredProducts;
       }
@@ -310,7 +310,7 @@ export const productsService = {
     } catch (error) {
       console.error(
         `Error al obtener productos por categoría ${category}:`,
-        error
+        error,
       );
       return [];
     }
@@ -343,7 +343,7 @@ export const productsService = {
             id: catName,
             name: catName,
             description: `Productos de ${catName}`,
-          })
+          }),
         );
 
         // Añadir categoría "todos" al principio
@@ -354,7 +354,7 @@ export const productsService = {
       }
 
       console.warn(
-        'No se encontraron productos para extraer categorías, usando fallback'
+        'No se encontraron productos para extraer categorías, usando fallback',
       );
       return getFallbackCategories();
     } catch (error) {
