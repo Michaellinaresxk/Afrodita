@@ -14,22 +14,17 @@ export default function Navbar() {
   // @ts-ignore
   const { cartCount, setIsCartOpen } = useCart();
 
-  // Handle scroll effect
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
 
-    // Add event listener with passive option for better performance
     window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Initial check
     handleScroll();
 
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Navigation links with active state
   const navLinks = [
     { title: 'Inicio', href: '/' },
     { title: 'Productos', href: '/products' },
@@ -37,7 +32,7 @@ export default function Navbar() {
     { title: 'Contacto', href: '/contact' },
   ];
 
-  // Animation variants
+  // ── Animation variants ──
   const menuVariants = {
     closed: {
       opacity: 0,
@@ -64,16 +59,8 @@ export default function Navbar() {
   };
 
   const itemVariants = {
-    closed: {
-      opacity: 0,
-      y: -5,
-      transition: { duration: 0.2 },
-    },
-    open: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.3 },
-    },
+    closed: { opacity: 0, y: -5, transition: { duration: 0.2 } },
+    open: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
   const logoVariants = {
@@ -85,12 +72,19 @@ export default function Navbar() {
     },
   };
 
-  // Dynamic styling based on scroll position
+  // ══════════════════════════════════════════════════════
+  // KEY FIX: Color logic inverted for light backgrounds
+  // ══════════════════════════════════════════════════════
+  //
+  // NOT scrolled (top) → transparent bg, DARK text (cream bg is light)
+  // Scrolled           → white bg with blur, DARK text (same)
+
   const navbarClasses = scrolled
     ? 'py-3 bg-white/90 backdrop-blur-md shadow-lg'
     : 'py-5 bg-transparent';
 
-  const textColorClass = scrolled ? 'text-gray-800' : 'text-white';
+  // Both states now use dark text since backgrounds are always light
+  const logoColor = 'text-[#2C3E2D]';
 
   return (
     <nav
@@ -98,7 +92,7 @@ export default function Navbar() {
     >
       <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
         <div className='flex justify-between items-center'>
-          {/* Logo with animation */}
+          {/* Logo */}
           <motion.div
             initial='initial'
             animate='animate'
@@ -106,9 +100,9 @@ export default function Navbar() {
           >
             <Link href='/' className='flex items-center'>
               <span
-                className={`font-serif text-2xl font-bold ${textColorClass} transition-colors duration-300`}
+                className={`font-serif text-2xl font-bold ${logoColor} transition-colors duration-300`}
               >
-                Afrodita<span className='text-emerald-500'>.</span>
+                Afrodita<span className='text-[#5C7A56]'>.</span>
               </span>
             </Link>
           </motion.div>
@@ -132,26 +126,22 @@ export default function Navbar() {
                     className={`
                       relative px-4 py-2 rounded-full mx-1
                       ${
-                        scrolled
-                          ? isActive
-                            ? 'text-emerald-600 font-medium'
-                            : 'text-gray-600 hover:text-emerald-600'
-                          : isActive
-                          ? 'text-white font-medium'
-                          : 'text-white/90 hover:text-white'
+                        isActive
+                          ? 'text-[#5C7A56] font-medium'
+                          : scrolled
+                            ? 'text-[#5E6B5A] hover:text-[#5C7A56]'
+                            : 'text-[#2C3E2D]/80 hover:text-[#2C3E2D]'
                       }
                       transition-colors duration-300 font-medium group
                     `}
                   >
                     {link.title}
 
-                    {/* Animated underline indicator for active link */}
+                    {/* Active underline indicator */}
                     {isActive ? (
                       <motion.span
                         layoutId='activeIndicator'
-                        className={`absolute bottom-0 left-0 right-0 h-0.5 mx-2 ${
-                          scrolled ? 'bg-emerald-500' : 'bg-white'
-                        }`}
+                        className='absolute bottom-0 left-0 right-0 h-0.5 mx-2 bg-[#5C7A56]'
                         transition={{
                           type: 'spring',
                           stiffness: 350,
@@ -159,11 +149,7 @@ export default function Navbar() {
                         }}
                       />
                     ) : (
-                      <span
-                        className={`absolute bottom-0 left-0 right-0 h-0.5 mx-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center ${
-                          scrolled ? 'bg-emerald-500/40' : 'bg-white/40'
-                        }`}
-                      />
+                      <span className='absolute bottom-0 left-0 right-0 h-0.5 mx-2 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-center bg-[#5C7A56]/30' />
                     )}
                   </Link>
                 </motion.div>
@@ -171,9 +157,8 @@ export default function Navbar() {
             })}
           </div>
 
-          {/* Desktop Action Buttons */}
+          {/* Desktop Cart Button */}
           <div className='hidden md:flex items-center space-x-3'>
-            {/* Cart Button with Animation */}
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -183,12 +168,12 @@ export default function Navbar() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                onClick={() => setIsCartOpen(true)} // Abre el SideCart al hacer clic
-                className={`p-3 rounded-full ${
+                onClick={() => setIsCartOpen(true)}
+                className={`p-3 rounded-full transition-all ${
                   scrolled
-                    ? 'text-gray-600 hover:text-emerald-600 hover:bg-emerald-50/80'
-                    : 'text-white/90 hover:text-white hover:bg-white/10'
-                } transition-all`}
+                    ? 'text-[#5E6B5A] hover:text-[#5C7A56] hover:bg-[#C4D7A4]/15'
+                    : 'text-[#2C3E2D]/70 hover:text-[#2C3E2D] hover:bg-[#2C3E2D]/5'
+                }`}
                 aria-label='Carrito de compras'
               >
                 <svg
@@ -196,24 +181,22 @@ export default function Navbar() {
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
                 >
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
                     strokeWidth='2'
                     d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
-                  ></path>
+                  />
                 </svg>
 
-                {/* Cart count badge */}
                 <AnimatePresence>
                   {cartCount > 0 && (
                     <motion.span
                       initial={{ scale: 0.5, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       exit={{ scale: 0.5, opacity: 0 }}
-                      className='absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
+                      className='absolute -top-1 -right-1 bg-[#5C7A56] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
                     >
                       {cartCount}
                     </motion.span>
@@ -221,44 +204,25 @@ export default function Navbar() {
                 </AnimatePresence>
               </motion.button>
             </motion.div>
-
-            {/* Login/Account Button */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7, duration: 0.3 }}
-            >
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`py-2 px-5 rounded-full text-sm font-medium ${
-                  scrolled
-                    ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-md hover:shadow-emerald-500/20'
-                    : 'bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border border-white/20'
-                } transition-all duration-300`}
-              >
-                Mi Cuenta
-              </motion.button>
-            </motion.div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile: Cart + Menu toggle */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.3 }}
             className='md:hidden flex items-center space-x-2'
           >
-            {/* Mobile Cart Button */}
+            {/* Mobile Cart */}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setIsCartOpen(true)} // Abre el SideCart en móvil también
-              className={`p-2 relative rounded-full ${
+              onClick={() => setIsCartOpen(true)}
+              className={`p-2 relative rounded-full transition-colors ${
                 scrolled
-                  ? 'text-gray-600 hover:text-emerald-600'
-                  : 'text-white/90 hover:text-white'
-              } transition-colors`}
+                  ? 'text-[#5E6B5A] hover:text-[#5C7A56]'
+                  : 'text-[#2C3E2D]/70 hover:text-[#2C3E2D]'
+              }`}
               aria-label='Carrito de compras'
             >
               <svg
@@ -266,24 +230,22 @@ export default function Navbar() {
                 fill='none'
                 stroke='currentColor'
                 viewBox='0 0 24 24'
-                xmlns='http://www.w3.org/2000/svg'
               >
                 <path
                   strokeLinecap='round'
                   strokeLinejoin='round'
                   strokeWidth='2'
                   d='M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z'
-                ></path>
+                />
               </svg>
 
-              {/* Mobile Cart Badge */}
               <AnimatePresence>
                 {cartCount > 0 && (
                   <motion.span
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.5, opacity: 0 }}
-                    className='absolute -top-1 -right-1 bg-emerald-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
+                    className='absolute -top-1 -right-1 bg-[#5C7A56] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-medium'
                   >
                     {cartCount}
                   </motion.span>
@@ -291,15 +253,15 @@ export default function Navbar() {
               </AnimatePresence>
             </motion.button>
 
-            {/* Mobile Menu Toggle Button */}
+            {/* Mobile Menu Toggle */}
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => setIsOpen(!isOpen)}
-              className={`p-3 rounded-lg ${
+              className={`p-3 rounded-lg transition-all ${
                 scrolled
-                  ? 'text-gray-600 hover:text-emerald-600 hover:bg-gray-100'
-                  : 'text-white/90 hover:text-white hover:bg-white/10'
-              } transition-all`}
+                  ? 'text-[#5E6B5A] hover:text-[#5C7A56] hover:bg-[#F5F0E8]'
+                  : 'text-[#2C3E2D]/70 hover:text-[#2C3E2D] hover:bg-[#2C3E2D]/5'
+              }`}
               aria-label={isOpen ? 'Cerrar menú' : 'Abrir menú'}
               aria-expanded={isOpen}
             >
@@ -316,14 +278,13 @@ export default function Navbar() {
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
                     >
                       <path
                         strokeLinecap='round'
                         strokeLinejoin='round'
                         strokeWidth='2'
                         d='M6 18L18 6M6 6l12 12'
-                      ></path>
+                      />
                     </motion.svg>
                   ) : (
                     <motion.svg
@@ -336,14 +297,13 @@ export default function Navbar() {
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
                     >
                       <path
                         strokeLinecap='round'
                         strokeLinejoin='round'
                         strokeWidth='2'
                         d='M4 6h16M4 12h16m-7 6h7'
-                      ></path>
+                      />
                     </motion.svg>
                   )}
                 </AnimatePresence>
@@ -353,7 +313,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile menu with animations */}
+      {/* Mobile menu */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -363,13 +323,7 @@ export default function Navbar() {
             exit='closed'
             className='md:hidden overflow-hidden'
           >
-            <div
-              className={`px-4 py-3 space-y-1 shadow-lg ${
-                scrolled
-                  ? 'bg-white border-t border-gray-100'
-                  : 'bg-gray-900/95 backdrop-blur-md'
-              }`}
-            >
+            <div className='px-4 py-3 space-y-1 shadow-lg bg-white/95 backdrop-blur-md border-t border-[#E8E3DA]'>
               {navLinks.map((link) => {
                 const isActive = pathname === link.href;
                 return (
@@ -380,13 +334,9 @@ export default function Navbar() {
                       className={`
                         block px-4 py-3 rounded-xl text-base font-medium transition-all
                         ${
-                          scrolled
-                            ? isActive
-                              ? 'bg-emerald-50 text-emerald-600 border-l-4 border-emerald-500'
-                              : 'text-gray-700 hover:text-emerald-600 hover:bg-emerald-50/50 hover:border-l-4 hover:border-emerald-500/40'
-                            : isActive
-                            ? 'bg-white/10 text-white border-l-4 border-white'
-                            : 'text-white/80 hover:text-white hover:bg-white/5 hover:border-l-4 hover:border-white/40'
+                          isActive
+                            ? 'bg-[#C4D7A4]/15 text-[#5C7A56] border-l-4 border-[#5C7A56]'
+                            : 'text-[#5E6B5A] hover:text-[#5C7A56] hover:bg-[#C4D7A4]/10 hover:border-l-4 hover:border-[#5C7A56]/30'
                         }
                       `}
                     >
@@ -396,18 +346,12 @@ export default function Navbar() {
                 );
               })}
 
-              {/* Mobile Account Button */}
+              {/* Mobile CTA */}
               <motion.div
                 variants={itemVariants}
-                className='pt-3 mt-3 border-t border-gray-200/20'
+                className='pt-3 mt-3 border-t border-[#E8E3DA]'
               >
-                <button
-                  className={`w-full py-3 px-4 rounded-xl text-sm font-medium text-center transition-all ${
-                    scrolled
-                      ? 'bg-emerald-500 text-white hover:bg-emerald-600'
-                      : 'bg-white/10 text-white hover:bg-white/20'
-                  }`}
-                >
+                <button className='w-full py-3 px-4 rounded-xl text-sm font-medium text-center transition-all bg-[#5C7A56] text-white hover:bg-[#4A6845]'>
                   Mi Cuenta
                 </button>
               </motion.div>
