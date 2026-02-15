@@ -1,8 +1,7 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useInView } from 'framer-motion';
-import Image from 'next/image';
+import { useState, useEffect, useRef, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
 import ProductCard from '@/components/products/ProductCard';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
@@ -12,18 +11,13 @@ import { productsService } from '@/lib/hygraph/productsService';
 
 const ProductsContent = () => {
   const router = useRouter();
-
-  // Obtener parámetros de búsqueda de la URL
   const searchParams = useSearchParams();
   const categoryFromUrl = searchParams.get('category');
 
-  // Estado local para productos y filtrado
+  // Estado principal
   const [products, setProducts] = useState<Product[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [productsLoading, setProductsLoading] = useState(true);
   const [productsError, setProductsError] = useState<string | null>(null);
-
-  // Estado local para filtrado y ordenamiento
   const [activeCategory, setActiveCategory] = useState(
     categoryFromUrl || 'todos',
   );
@@ -32,20 +26,28 @@ const ProductsContent = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [isSticky, setIsSticky] = useState(false);
 
+  const headerRef = useRef(null);
+
   const {
     categories,
     loading: categoriesLoading,
     error: categoriesError,
   } = useCategories();
 
-  // Cargar productos directamente usando productsService
+  // Sincronizar categoría desde URL
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setActiveCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
+
+  // Cargar productos cuando cambia la categoría
   useEffect(() => {
     const loadProducts = async () => {
       try {
         setProductsLoading(true);
         setProductsError(null);
 
-        console.log(`Cargando productos con categoría: ${activeCategory}`);
         let productData: Product[];
 
         if (activeCategory === 'todos') {
@@ -68,53 +70,9 @@ const ProductsContent = () => {
     loadProducts();
   }, [activeCategory]);
 
-  const loading = productsLoading || categoriesLoading;
-  const error = productsError || categoriesError;
-
-  const headerRef = useRef(null);
-  const productsSectionRef = useRef(null);
-  const isInView = useInView(productsSectionRef, { once: true, amount: 0.1 });
-
-  // Efecto para inicializar la categoría desde la URL
-  useEffect(() => {
-    if (categoryFromUrl) {
-      setActiveCategory(categoryFromUrl);
-      console.log(`Categoría establecida desde URL: ${categoryFromUrl}`);
-    }
-  }, [categoryFromUrl]);
-
-  // Efecto para actualizar la URL cuando cambia la categoría
-  useEffect(() => {
-    if (activeCategory === 'todos') {
-      router.push('/products');
-    } else {
-      router.push(`/products?category=${activeCategory}`);
-    }
-  }, [activeCategory, router]);
-
-  // Efecto para gestionar scroll y filtros sticky
-  useEffect(() => {
-    const handleScroll = () => {
-      if (headerRef.current) {
-        const header = headerRef.current as HTMLElement;
-        const headerOffset = header.offsetTop;
-        setIsSticky(window.scrollY > headerOffset);
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
-
-  // Efecto para filtrar y ordenar productos
-  useEffect(() => {
-    if (!products || products.length === 0) return;
-
-    console.log(
-      `Filtrando productos: búsqueda=${searchQuery}, orden=${sortBy}`,
-    );
+  // Filtrar y ordenar con useMemo (reemplaza el useEffect de filtrado)
+  const filteredProducts = useMemo(() => {
+    if (!products || products.length === 0) return [];
 
     let result = [...products];
 
@@ -123,8 +81,8 @@ const ProductsContent = () => {
       const query = searchQuery.toLowerCase();
       result = result.filter(
         (product) =>
-          product.name.toLowerCase().includes(query) ||
-          product.description.toLowerCase().includes(query) ||
+          product.name?.toLowerCase().includes(query) ||
+          product.description?.toLowerCase().includes(query) ||
           (Array.isArray(product.ingredients) &&
             product.ingredients.some(
               (ingredient) =>
@@ -134,7 +92,7 @@ const ProductsContent = () => {
       );
     }
 
-    // Ordenar productos
+    // Ordenar
     switch (sortBy) {
       case 'price-low':
         result.sort((a, b) => a.price - b.price);
@@ -145,23 +103,43 @@ const ProductsContent = () => {
       case 'newest':
         result.sort((a, b) => (b.isNew === a.isNew ? 0 : b.isNew ? 1 : -1));
         break;
-      case 'popular':
       default:
         break;
     }
 
-    setFilteredProducts(result);
+    return result;
   }, [products, searchQuery, sortBy]);
 
-  const handleCategoryClick = (categorySlug: string) => {
-    setActiveCategory(categorySlug);
+  // Sticky scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      if (headerRef.current) {
+        const header = headerRef.current as HTMLElement;
+        setIsSticky(window.scrollY > header.offsetTop);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const handleCategoryClick = (categoryId: string) => {
+    setActiveCategory(categoryId);
+    if (categoryId === 'todos') {
+      router.push('/products');
+    } else {
+      router.push(`/products?category=${categoryId}`);
+    }
   };
+
+  const loading = productsLoading || categoriesLoading;
+  const error = productsError || categoriesError;
 
   return (
     <>
       <WhatsAppButton />
 
-      {/* Header de la página */}
+      {/* Header */}
       <div className='bg-[#FBF9F5] pt-24 pb-12'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <motion.div
@@ -196,23 +174,13 @@ const ProductsContent = () => {
             {/* Categorías - Desktop */}
             <div className='hidden md:block mb-4'>
               <div className='flex flex-wrap gap-2'>
-                <button
-                  onClick={() => handleCategoryClick('todos')}
-                  className={`px-4 py-2 rounded-full text-sm ${
-                    activeCategory === 'todos'
-                      ? 'bg-[#5C7A56] text-white font-medium'
-                      : 'bg-[#F5F0E8] text-[#2C3E2D] hover:bg-[#E8C4A0]/30'
-                  } transition-colors`}
-                >
-                  Todos
-                </button>
                 {categories &&
                   categories.map((category) => (
                     <button
                       key={category.id}
-                      onClick={() => handleCategoryClick(category.slug)}
+                      onClick={() => handleCategoryClick(category.id)}
                       className={`px-4 py-2 rounded-full text-sm ${
-                        activeCategory === category.slug
+                        activeCategory === category.id
                           ? 'bg-[#5C7A56] text-white font-medium'
                           : 'bg-[#F5F0E8] text-[#2C3E2D] hover:bg-[#E8C4A0]/30'
                       } transition-colors`}
@@ -238,14 +206,13 @@ const ProductsContent = () => {
                   fill='none'
                   stroke='currentColor'
                   viewBox='0 0 24 24'
-                  xmlns='http://www.w3.org/2000/svg'
                 >
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
                     strokeWidth='2'
                     d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'
-                  ></path>
+                  />
                 </svg>
               </div>
 
@@ -279,7 +246,7 @@ const ProductsContent = () => {
                     strokeLinejoin='round'
                     strokeWidth='2'
                     d='M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z'
-                  ></path>
+                  />
                 </svg>
               </button>
             </div>
@@ -310,9 +277,9 @@ const ProductsContent = () => {
                     categories.map((category) => (
                       <button
                         key={category.id}
-                        onClick={() => handleCategoryClick(category.slug)}
+                        onClick={() => handleCategoryClick(category.id)}
                         className={`px-4 py-2 rounded-full text-sm ${
-                          activeCategory === category.slug
+                          activeCategory === category.id
                             ? 'bg-[#5C7A56] text-white font-medium'
                             : 'bg-[#F5F0E8] text-[#2C3E2D] hover:bg-[#E8C4A0]/30'
                         } transition-colors`}
@@ -328,7 +295,7 @@ const ProductsContent = () => {
           {/* Grid de productos */}
           {loading ? (
             <div className='flex justify-center items-center py-20'>
-              <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5C7A56]'></div>
+              <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#5C7A56]' />
             </div>
           ) : error ? (
             <div className='text-center py-20'>
@@ -341,34 +308,28 @@ const ProductsContent = () => {
               </button>
             </div>
           ) : (
-            <>
-              <div ref={productsSectionRef} className='pt-6'>
-                <p className='text-sm text-[#5C7A56] mb-6'>
-                  {filteredProducts.length}{' '}
-                  {filteredProducts.length === 1 ? 'producto' : 'productos'}{' '}
-                  encontrados
-                </p>
+            <div className='pt-6'>
+              <p className='text-sm text-[#5C7A56] mb-6'>
+                {filteredProducts.length}{' '}
+                {filteredProducts.length === 1 ? 'producto' : 'productos'}{' '}
+                encontrados
+              </p>
 
-                <motion.div
-                  initial={{ opacity: 0 }}
-                  animate={isInView ? { opacity: 1 } : {}}
-                  transition={{ duration: 0.5 }}
-                  className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'
-                >
+              {filteredProducts.length > 0 ? (
+                <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
                   {filteredProducts.map((product, index) => (
                     <motion.div
-                      key={product.id}
+                      key={`product-${product.id || index}`}
                       initial={{ opacity: 0, y: 20 }}
-                      animate={isInView ? { opacity: 1, y: 0 } : {}}
+                      animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: index * 0.05 }}
+                      className='h-full'
                     >
                       <ProductCard product={product} />
                     </motion.div>
                   ))}
-                </motion.div>
-              </div>
-
-              {filteredProducts.length === 0 && !loading && (
+                </div>
+              ) : (
                 <div className='text-center py-20'>
                   <p className='text-[#5C7A56] text-lg mb-4'>
                     No se encontraron productos con los filtros seleccionados.
@@ -385,20 +346,19 @@ const ProductsContent = () => {
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
-                      xmlns='http://www.w3.org/2000/svg'
                     >
                       <path
                         strokeLinecap='round'
                         strokeLinejoin='round'
                         strokeWidth='2'
                         d='M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15'
-                      ></path>
+                      />
                     </svg>
                     Restablecer filtros
                   </button>
                 </div>
               )}
-            </>
+            </div>
           )}
         </div>
       </div>
