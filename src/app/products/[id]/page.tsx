@@ -11,34 +11,27 @@ import RelatedProducts from '@/components/products/RelatedProducts';
 import WhatsAppButton from '@/components/ui/WhatsAppButton';
 
 export default function ProductDetailsPage() {
-  // Estados para manejar la carga de datos
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Para manejo de rutas
   const router = useRouter();
   const params = useParams();
   const productId = params?.id;
 
-  // Estado de montaje para evitar problemas de hidratación
   const [isMounted, setIsMounted] = useState(false);
 
-  // Efecto para manejar la hidratación
   useEffect(() => {
     setIsMounted(true);
   }, []);
 
-  // Cargar datos del producto
   useEffect(() => {
-    if (!isMounted) return;
-    if (!productId) return;
+    if (!isMounted || !productId) return;
 
     async function loadProductData() {
       try {
         setLoading(true);
-        console.log('Cargando producto con ID:', productId);
 
         // @ts-ignore
         const productData = await productsService.getProductById(productId);
@@ -50,11 +43,9 @@ export default function ProductDetailsPage() {
           return;
         }
 
-        console.log('Producto cargado:', productData);
         // @ts-ignore
         setProduct(productData);
 
-        // Cargar productos relacionados
         try {
           const allProducts = await productsService.getAllProducts();
           const related = allProducts
@@ -64,7 +55,6 @@ export default function ProductDetailsPage() {
           setRelatedProducts(related);
         } catch (relatedErr) {
           console.error('Error al cargar productos relacionados:', relatedErr);
-          // No establecemos error general, solo fallaron los productos relacionados
         }
       } catch (err) {
         console.error('Error al cargar el producto:', err);
@@ -78,35 +68,35 @@ export default function ProductDetailsPage() {
     loadProductData();
   }, [productId, isMounted]);
 
-  // Si aún no está montado, mostrar un spinner básico
+  // ── Pre-mount spinner ──
   if (!isMounted) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-white'>
-        <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500'></div>
+      <div className='min-h-screen flex items-center justify-center bg-[#FBF9F5]'>
+        <div className='animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#5C7A56]' />
       </div>
     );
   }
 
-  // Estado de carga
+  // ── Loading ──
   if (loading) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-white'>
+      <div className='min-h-screen flex items-center justify-center bg-[#FBF9F5]'>
         <div className='text-center'>
-          <div className='animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-500 mb-4'></div>
-          <p className='text-neutral-600'>Cargando producto...</p>
+          <div className='animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#5C7A56] mx-auto mb-4' />
+          <p className='text-[#5E6B5A] text-sm'>Cargando producto...</p>
         </div>
       </div>
     );
   }
 
-  // Estado de error
+  // ── Error ──
   if (error || !product) {
     return (
-      <div className='min-h-screen flex items-center justify-center bg-white'>
+      <div className='min-h-screen flex items-center justify-center bg-[#FBF9F5]'>
         <div className='text-center p-8 max-w-md'>
-          <div className='text-red-500 mb-4'>
+          <div className='inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-50 text-red-400 mb-6'>
             <svg
-              className='w-12 h-12 mx-auto'
+              className='w-8 h-8'
               fill='none'
               viewBox='0 0 24 24'
               stroke='currentColor'
@@ -114,21 +104,34 @@ export default function ProductDetailsPage() {
               <path
                 strokeLinecap='round'
                 strokeLinejoin='round'
-                strokeWidth={2}
+                strokeWidth={1.5}
                 d='M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'
               />
             </svg>
           </div>
-          <h2 className='text-2xl font-bold text-gray-800 mb-4'>
+          <h2 className='text-2xl font-serif font-bold text-[#2C3E2D] mb-3'>
             {error || 'Producto no encontrado'}
           </h2>
-          <p className='text-gray-600 mb-6'>
+          <p className='text-[#5E6B5A] mb-8 leading-relaxed'>
             Lo sentimos, no pudimos encontrar el producto que estás buscando.
           </p>
           <button
             onClick={() => router.push('/products')}
-            className='px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors'
+            className='inline-flex items-center gap-2 px-7 py-3.5 bg-[#5C7A56] hover:bg-[#4A6845] text-white rounded-full transition-all duration-300 font-medium text-sm shadow-[0_4px_20px_rgba(92,122,86,0.25)] hover:shadow-[0_6px_28px_rgba(92,122,86,0.35)]'
           >
+            <svg
+              className='w-4 h-4'
+              fill='none'
+              viewBox='0 0 24 24'
+              stroke='currentColor'
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap='round'
+                strokeLinejoin='round'
+                d='M10 19l-7-7m0 0l7-7m-7 7h18'
+              />
+            </svg>
             Ver todos los productos
           </button>
         </div>
@@ -136,24 +139,21 @@ export default function ProductDetailsPage() {
     );
   }
 
-  // Producto cargado correctamente
+  // ── Product loaded ──
   return (
     <>
       <WhatsAppButton />
 
-      {/* Migas de pan */}
       {product && <Breadcrumb product={product} />}
 
-      {/* Sección principal del producto */}
-      <section className='py-12 bg-white'>
+      {/* Main product section */}
+      <section className='py-12 bg-[#FBF9F5]'>
         <div className='max-w-7xl mx-auto px-4 sm:px-6 lg:px-8'>
           <div className='grid grid-cols-1 lg:grid-cols-2 gap-12'>
-            {/* Columna izquierda - Galería de imágenes */}
             <div className='lg:sticky lg:top-32 self-start'>
               <ProductGallery product={product} />
             </div>
 
-            {/* Columna derecha - Información del producto */}
             <div>
               <ProductInfo product={product} />
             </div>
@@ -161,10 +161,10 @@ export default function ProductDetailsPage() {
         </div>
       </section>
 
-      {/* Tabs con información detallada */}
+      {/* Tabs */}
       <ProductTabs product={product} />
 
-      {/* Productos relacionados */}
+      {/* Related products */}
       {relatedProducts.length > 0 && (
         <RelatedProducts products={relatedProducts} />
       )}
